@@ -1,34 +1,69 @@
-const createError = require('http-errors');
+
 const express = require('express');
 const path = require('path');
-const cookieParser = require('cookie-parser');
+
 const logger = require('morgan');
+var cookieParser = require('cookie-parser');
+var bodyParser = require('body-parser');
+const expressJwt = require('express-jwt');
+const cors = require('cors')
 
-const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
 
+let index = require('./routes/index');
+let order = require('./routes/wx/order');
+let user = require('./routes/wx/user');
+let address = require('./routes/wx/address');
+let goods = require('./routes/wx/goods');
+let cart = require('./routes/wx/cart');
+// let userUpload = require('./routes/wx/upload');
+let PCCT = require('./routes/wx/PCCT');
+let collection = require('./routes/wx/collection');
 const app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
+app.use(cors())
 
 app.use(logger('dev'));
-app.use(express.json());
+//使用中间件验证token合法性
+app.use(expressJwt({ secret: 'secret' }).unless({
+  path: ['/', '/api/user/token', '/api/admin/register', '/api/admin/login'] //除了这些地址，其他的URL都需要验证
+}));
+app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/', index);
 
+app.use('/api/address', address);
+app.use('/api/user', user);
+app.use('/api/goods', goods);
+app.use('/api/cart', cart);
+app.use('/api/order', order);
+// app.use('/api/upload', userUpload);
+app.use('/api/pcct', PCCT);
+app.use('/api/collection', collection);
+
+// 处理401错误
+app.use(function (err, req, res, next) {
+  if (err.name === 'UnauthorizedError') {
+    res.status(401).json({
+      status: false,
+      ...err,
+    });
+  }
+});
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
+app.use(function (req, res, next) {
+  var err = new Error('Not Found');
+  err.status = 404;
+  next(err);
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
