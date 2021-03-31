@@ -27,7 +27,7 @@ let db = require('../../config/mysql');
  *
  * @apiSampleRequest /api/goods/list
  */
-router.get("/list", function (req, res) {
+router.get("/list", (req, res) => {
     let { pageSize = 4, pageIndex = 1, cate_1st, cate_2nd, cate_3rd, sortByPrice } = req.query;
     //拼接SQL
     let size = parseInt(pageSize);
@@ -71,7 +71,7 @@ router.get("/list", function (req, res) {
  *
  * @apiSampleRequest /api/goods/detail
  */
-router.get("/detail", function (req, res) {
+router.get("/detail", (req, res) =>{
     let { id } = req.query;
     let { openid } = req.user;
     let sql = `
