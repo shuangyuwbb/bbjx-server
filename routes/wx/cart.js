@@ -154,4 +154,19 @@ router.put('/decrease', function (req, res) {
 });
 
 
+/**
+ * 获取购物车页面
+ */
+router.get("/shopList", (req, res) =>{
+    let sql = `SELECT id, subtitle, subsidize, price, discount_price, main_image FROM bbjx_product WHERE hot > 1 ORDER BY hot DESC `
+    db.query(sql, [],  (results)=> {
+        res.json({
+            status: 0,
+            msg: "success!",
+            data: results
+        });
+    });
+});
+
+
 module.exports = router;
