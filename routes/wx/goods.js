@@ -156,16 +156,41 @@ router.get("/category/v1", (req, res) =>{
  */
 router.get("/category/v2", (req, res) =>{
     let { id } = req.query
-    let sql = `SELECT id, name, img FROM bbjx_category WHERE parent_id = ?`
-    let sql1 = `SELECT id, name, img FROM bbjx_product WHERE id = ?`
+    let sql = `SELECT id FROM bbjx_category WHERE parent_id = ?`
+    let sql1 = `SELECT id, category_id, title, main_image FROM bbjx_product WHERE category_id in (?)`
 
-    db.query(sql, [id],  (results)=> {
-        db.query(sql1, [], )
-        res.json({
-            status: 0,
-            msg: "success!",
-            data: results
-        });
+    db.query(sql, [id],  results=>{
+        let arrId = []
+        let data = []
+        results.forEach(item=>{
+            arrId.push(item.id)
+        })
+        db.query(sql1, [arrId], result=>{
+            for (let i=0; i<results.length; i++){
+                let obj = {}
+                for (let j=0;j<result.length;j++){
+                    if (i.id === j.category_id){
+
+                    }
+                }
+            }
+            results.forEach(v=>{
+                let obj = {}
+                data.push(results)
+                result.forEach(item=>{
+                    obj.category_id = v.id
+                    if(item.category_id === v.category_id){
+                        obj.data = item
+                    }
+                })
+                data.push(obj)
+            })
+            res.json({
+                status: 0,
+                msg: "success!",
+                data: data
+            });
+        })
     });
 });
 
@@ -184,3 +209,14 @@ router.get("/list", (req, res) =>{
     });
 });
 module.exports = router;
+
+
+[
+    {
+        category_id: 0,
+        data:{
+
+        }
+    }
+]
+
