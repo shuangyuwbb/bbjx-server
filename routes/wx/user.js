@@ -18,6 +18,7 @@ let { appid, appSecret } = require("../../config/wx");
  *
  * @apiSampleRequest /api/user/token
  */
+
 router.post('/token', function(req, res) {
   let { code } = req.body;
   console.log(code)
@@ -57,7 +58,7 @@ router.post('/token', function(req, res) {
           if (results.affectedRows > 0) {
             res.json({
               status: 0,
-              token: token
+              token: token,
             });
           }
         });
@@ -92,6 +93,7 @@ router.post('/token', function(req, res) {
  *
  * @apiSampleRequest /api/user/info
  */
+
 router.put("/info", function(req, res) {
   let { nickName, gender, avatarUrl, country, province, city } = req.body;
   let { openid } = req.user;

@@ -10,303 +10,251 @@ Target Server Type    : MYSQL
 Target Server Version : 50505
 File Encoding         : 65001
 
-Date: 2021-03-13 15:00:14
+Date: 2021-04-08 22:04:09
 */
 
 SET FOREIGN_KEY_CHECKS=0;
 
 -- ----------------------------
--- Table structure for address
+-- Table structure for bbjx_cart
 -- ----------------------------
-DROP TABLE IF EXISTS `address`;
-CREATE TABLE `address` (
+DROP TABLE IF EXISTS `bbjx_cart`;
+CREATE TABLE `bbjx_cart` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `uid` varchar(255) NOT NULL COMMENT '用户id',
-  `name` varchar(255) NOT NULL COMMENT '姓名',
-  `tel` varchar(255) NOT NULL COMMENT '手机号',
-  `province` varchar(12) NOT NULL COMMENT '省',
-  `city` varchar(12) NOT NULL COMMENT '市',
-  `county` varchar(12) NOT NULL COMMENT '县区',
-  `street` varchar(255) DEFAULT NULL COMMENT '详细地址',
-  `code` varchar(255) DEFAULT NULL COMMENT '邮编',
-  `isDefault` int(11) DEFAULT 1 COMMENT '是否默认',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE=MyISAM AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='收货地址';
+  `openid` varchar(40) NOT NULL,
+  `product_id` int(11) DEFAULT NULL,
+  `count` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Table structure for admin
+-- Records of bbjx_cart
 -- ----------------------------
-DROP TABLE IF EXISTS `admin`;
-CREATE TABLE `admin` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `username` varchar(255) DEFAULT NULL COMMENT '用户名',
-  `password` varchar(255) DEFAULT NULL COMMENT '密码',
-  `fullname` varchar(255) DEFAULT NULL COMMENT '昵称',
-  `sex` varchar(255) DEFAULT '男' COMMENT '性别',
-  `avatar` varchar(255) DEFAULT '/images/avatar/default.jpg' COMMENT '头像',
-  `tel` varchar(255) DEFAULT NULL COMMENT '手机号码',
-  `email` varchar(255) DEFAULT NULL COMMENT '注册邮箱',
-  `create_time` datetime NOT NULL COMMENT '创建时间',
-  `login_time` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp() COMMENT '登录时间',
-  `login_count` bigint(20) NOT NULL DEFAULT 1 COMMENT '登录次数',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='用户表';
 
 -- ----------------------------
--- Table structure for admin_role
+-- Table structure for bbjx_category
 -- ----------------------------
-DROP TABLE IF EXISTS `admin_role`;
-CREATE TABLE `admin_role` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `admin_id` int(11) DEFAULT NULL COMMENT '用户id',
-  `role_id` int(11) DEFAULT NULL COMMENT '角色id',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED;
+DROP TABLE IF EXISTS `bbjx_category`;
+CREATE TABLE `bbjx_category` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '类别Id',
+  `parent_id` int(11) DEFAULT NULL COMMENT '父类别id当id=0时说明是根节点,一级类别',
+  `name` varchar(50) DEFAULT NULL COMMENT '类别名称',
+  `img` varchar(255) DEFAULT NULL,
+  `status` tinyint(1) DEFAULT 1 COMMENT '类别状态1-正常,2-已废弃',
+  `sort_order` int(11) NOT NULL DEFAULT 0 COMMENT '排序编号,同类展示顺序,数值相等则自然排序',
+  `create_time` datetime DEFAULT current_timestamp() COMMENT '创建时间',
+  `update_time` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp() COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=100034 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Table structure for cart
+-- Records of bbjx_category
 -- ----------------------------
-DROP TABLE IF EXISTS `cart`;
-CREATE TABLE `cart` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `uid` varchar(255) NOT NULL COMMENT '用户id',
-  `goods_id` int(11) NOT NULL COMMENT '商品id',
-  `goods_num` int(11) NOT NULL COMMENT '商品数量',
-  `status` tinyint(4) DEFAULT 1 COMMENT '1-正常，0-禁用，-1-删除',
-  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
-  `update_time` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp() COMMENT '更新时间',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='购物车';
+INSERT INTO `bbjx_category` VALUES ('100001', '0', '家用电器', 'https://img.alicdn.com/imgextra/i3/22250511/O1CN01AkHT5R1Fe53rLFYU1_!!0-saturn_solar.jpg_468x468q75.jpg_.webp', '1', '0', '2000-03-25 16:46:00', '2021-04-03 15:36:16');
+INSERT INTO `bbjx_category` VALUES ('100002', '0', '数码3C', 'https://img.alicdn.com/imgextra/i3/22250511/O1CN01AkHT5R1Fe53rLFYU1_!!0-saturn_solar.jpg_468x468q75.jpg_.webp', '1', '0', '2000-03-25 16:46:21', '2021-04-03 15:36:16');
+INSERT INTO `bbjx_category` VALUES ('100003', '0', '服装箱包', 'https://img.alicdn.com/imgextra/i3/22250511/O1CN01AkHT5R1Fe53rLFYU1_!!0-saturn_solar.jpg_468x468q75.jpg_.webp', '1', '0', '2000-03-25 16:49:53', '2021-04-03 15:36:16');
+INSERT INTO `bbjx_category` VALUES ('100004', '0', '食品生鲜', 'https://img.alicdn.com/imgextra/i3/22250511/O1CN01AkHT5R1Fe53rLFYU1_!!0-saturn_solar.jpg_468x468q75.jpg_.webp', '1', '0', '2000-03-25 16:50:19', '2021-04-03 15:36:16');
+INSERT INTO `bbjx_category` VALUES ('100005', '0', '酒水饮料', 'https://img.alicdn.com/imgextra/i3/22250511/O1CN01AkHT5R1Fe53rLFYU1_!!0-saturn_solar.jpg_468x468q75.jpg_.webp', '1', '1', '2000-03-25 16:50:29', '2021-04-03 15:36:16');
+INSERT INTO `bbjx_category` VALUES ('100006', '100001', '冰箱', 'https://img.alicdn.com/imgextra/i3/22250511/O1CN01AkHT5R1Fe53rLFYU1_!!0-saturn_solar.jpg_468x468q75.jpg_.webp', '1', '0', '2000-03-25 16:52:15', '2021-04-03 15:22:21');
+INSERT INTO `bbjx_category` VALUES ('100007', '100001', '电视', 'https://img.alicdn.com/imgextra/i3/22250511/O1CN01AkHT5R1Fe53rLFYU1_!!0-saturn_solar.jpg_468x468q75.jpg_.webp', '1', '0', '2000-03-25 16:52:26', '2021-04-03 15:22:25');
+INSERT INTO `bbjx_category` VALUES ('100008', '100001', '洗衣机', 'https://img.alicdn.com/imgextra/i3/22250511/O1CN01AkHT5R1Fe53rLFYU1_!!0-saturn_solar.jpg_468x468q75.jpg_.webp', '1', '0', '2000-03-25 16:52:39', '2021-04-03 15:22:28');
+INSERT INTO `bbjx_category` VALUES ('100009', '100001', '空调', 'https://img.alicdn.com/imgextra/i3/22250511/O1CN01AkHT5R1Fe53rLFYU1_!!0-saturn_solar.jpg_468x468q75.jpg_.webp', '1', '0', '2000-03-25 16:52:45', '2021-04-03 15:30:04');
+INSERT INTO `bbjx_category` VALUES ('100010', '100001', '电热水器', 'https://img.alicdn.com/imgextra/i3/22250511/O1CN01AkHT5R1Fe53rLFYU1_!!0-saturn_solar.jpg_468x468q75.jpg_.webp', '1', '0', '2000-03-25 16:52:54', '2021-04-03 15:36:16');
+INSERT INTO `bbjx_category` VALUES ('100011', '100002', '电脑', 'https://img.alicdn.com/imgextra/i3/22250511/O1CN01AkHT5R1Fe53rLFYU1_!!0-saturn_solar.jpg_468x468q75.jpg_.webp', '1', '1', '2000-03-25 16:53:18', '2021-04-03 15:36:16');
+INSERT INTO `bbjx_category` VALUES ('100012', '100002', '手机', 'https://img.alicdn.com/imgextra/i3/22250511/O1CN01AkHT5R1Fe53rLFYU1_!!0-saturn_solar.jpg_468x468q75.jpg_.webp', '1', '0', '2000-03-25 16:53:27', '2021-04-03 15:36:16');
+INSERT INTO `bbjx_category` VALUES ('100013', '100002', '平板电脑', 'https://img.alicdn.com/imgextra/i3/22250511/O1CN01AkHT5R1Fe53rLFYU1_!!0-saturn_solar.jpg_468x468q75.jpg_.webp', '1', '0', '2000-03-25 16:53:35', '2021-04-03 15:36:16');
+INSERT INTO `bbjx_category` VALUES ('100014', '100002', '数码相机', 'https://img.alicdn.com/imgextra/i3/22250511/O1CN01AkHT5R1Fe53rLFYU1_!!0-saturn_solar.jpg_468x468q75.jpg_.webp', '1', '0', '2000-03-25 16:53:56', '2021-04-03 15:36:16');
+INSERT INTO `bbjx_category` VALUES ('100015', '100002', '3C配件', 'https://img.alicdn.com/imgextra/i3/22250511/O1CN01AkHT5R1Fe53rLFYU1_!!0-saturn_solar.jpg_468x468q75.jpg_.webp', '1', '0', '2000-03-25 16:54:07', '2021-04-03 15:36:16');
+INSERT INTO `bbjx_category` VALUES ('100016', '100003', '女装', 'https://img.alicdn.com/imgextra/i3/22250511/O1CN01AkHT5R1Fe53rLFYU1_!!0-saturn_solar.jpg_468x468q75.jpg_.webp', '1', '0', '2000-03-25 16:54:44', '2021-04-03 15:36:16');
+INSERT INTO `bbjx_category` VALUES ('100017', '100003', '帽子', 'https://img.alicdn.com/imgextra/i3/22250511/O1CN01AkHT5R1Fe53rLFYU1_!!0-saturn_solar.jpg_468x468q75.jpg_.webp', '1', '0', '2000-03-25 16:54:51', '2021-04-03 15:36:16');
+INSERT INTO `bbjx_category` VALUES ('100018', '100003', '旅行箱', 'https://img.alicdn.com/imgextra/i3/22250511/O1CN01AkHT5R1Fe53rLFYU1_!!0-saturn_solar.jpg_468x468q75.jpg_.webp', '1', '0', '2000-03-25 16:55:02', '2021-04-03 15:36:16');
+INSERT INTO `bbjx_category` VALUES ('100019', '100003', '手提包', 'https://img.alicdn.com/imgextra/i3/22250511/O1CN01AkHT5R1Fe53rLFYU1_!!0-saturn_solar.jpg_468x468q75.jpg_.webp', '1', '0', '2000-03-25 16:55:09', '2021-04-03 15:36:16');
+INSERT INTO `bbjx_category` VALUES ('100020', '100003', '保暖内衣', 'https://img.alicdn.com/imgextra/i3/22250511/O1CN01AkHT5R1Fe53rLFYU1_!!0-saturn_solar.jpg_468x468q75.jpg_.webp', '1', '0', '2000-03-25 16:55:18', '2021-04-03 15:36:16');
+INSERT INTO `bbjx_category` VALUES ('100021', '100004', '零食', 'https://img.alicdn.com/imgextra/i3/22250511/O1CN01AkHT5R1Fe53rLFYU1_!!0-saturn_solar.jpg_468x468q75.jpg_.webp', '1', '0', '2000-03-25 16:55:30', '2021-04-03 15:36:16');
+INSERT INTO `bbjx_category` VALUES ('100022', '100004', '生鲜', 'https://img.alicdn.com/imgextra/i3/22250511/O1CN01AkHT5R1Fe53rLFYU1_!!0-saturn_solar.jpg_468x468q75.jpg_.webp', '1', '0', '2000-03-25 16:55:37', '2021-04-03 15:36:16');
+INSERT INTO `bbjx_category` VALUES ('100023', '100004', '半成品菜', 'https://img.alicdn.com/imgextra/i3/22250511/O1CN01AkHT5R1Fe53rLFYU1_!!0-saturn_solar.jpg_468x468q75.jpg_.webp', '1', '0', '2000-03-25 16:55:47', '2021-04-03 15:36:16');
+INSERT INTO `bbjx_category` VALUES ('100024', '100004', '速冻食品', 'https://img.alicdn.com/imgextra/i3/22250511/O1CN01AkHT5R1Fe53rLFYU1_!!0-saturn_solar.jpg_468x468q75.jpg_.webp', '1', '0', '2000-03-25 16:55:56', '2021-04-03 15:36:16');
+INSERT INTO `bbjx_category` VALUES ('100025', '100004', '进口食品', 'https://img.alicdn.com/imgextra/i3/22250511/O1CN01AkHT5R1Fe53rLFYU1_!!0-saturn_solar.jpg_468x468q75.jpg_.webp', '1', '0', '2000-03-25 16:56:06', '2021-04-03 15:36:16');
+INSERT INTO `bbjx_category` VALUES ('100026', '100005', '白酒', 'https://img.alicdn.com/imgextra/i3/22250511/O1CN01AkHT5R1Fe53rLFYU1_!!0-saturn_solar.jpg_468x468q75.jpg_.webp', '1', '0', '2000-03-25 16:56:22', '2021-04-03 15:36:16');
+INSERT INTO `bbjx_category` VALUES ('100027', '100005', '红酒', 'https://img.alicdn.com/imgextra/i3/22250511/O1CN01AkHT5R1Fe53rLFYU1_!!0-saturn_solar.jpg_468x468q75.jpg_.webp', '1', '0', '2000-03-25 16:56:30', '2021-04-03 15:36:16');
+INSERT INTO `bbjx_category` VALUES ('100028', '100005', '饮料', 'https://img.alicdn.com/imgextra/i3/22250511/O1CN01AkHT5R1Fe53rLFYU1_!!0-saturn_solar.jpg_468x468q75.jpg_.webp', '1', '0', '2000-03-25 16:56:37', '2021-04-03 15:36:16');
+INSERT INTO `bbjx_category` VALUES ('100029', '100005', '调制鸡尾酒', 'https://img.alicdn.com/imgextra/i3/22250511/O1CN01AkHT5R1Fe53rLFYU1_!!0-saturn_solar.jpg_468x468q75.jpg_.webp', '1', '0', '2000-03-25 16:56:45', '2021-04-03 15:36:16');
+INSERT INTO `bbjx_category` VALUES ('100030', '100005', '进口洋酒', 'https://img.alicdn.com/imgextra/i3/22250511/O1CN01AkHT5R1Fe53rLFYU1_!!0-saturn_solar.jpg_468x468q75.jpg_.webp', '1', '0', '2000-03-25 16:57:05', '2021-04-03 15:36:16');
+INSERT INTO `bbjx_category` VALUES ('100031', null, null, 'https://img.alicdn.com/imgextra/i3/22250511/O1CN01AkHT5R1Fe53rLFYU1_!!0-saturn_solar.jpg_468x468q75.jpg_.webp', '1', '0', '2021-04-03 15:28:18', '2021-04-03 15:28:18');
+INSERT INTO `bbjx_category` VALUES ('100032', null, null, 'https://img.alicdn.com/imgextra/i3/22250511/O1CN01AkHT5R1Fe53rLFYU1_!!0-saturn_solar.jpg_468x468q75.jpg_.webp', '1', '0', '2021-04-03 15:29:14', '2021-04-03 15:29:14');
+INSERT INTO `bbjx_category` VALUES ('100033', null, null, 'https://img.alicdn.com/imgextra/i3/22250511/O1CN01AkHT5R1Fe53rLFYU1_!!0-saturn_solar.jpg_468x468q75.jpg_.webp', '1', '0', '2021-04-03 15:33:56', '2021-04-03 15:33:56');
 
 -- ----------------------------
--- Table structure for category
+-- Table structure for bbjx_order
 -- ----------------------------
-DROP TABLE IF EXISTS `category`;
-CREATE TABLE `category` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL COMMENT '名称',
-  `pId` int(11) NOT NULL COMMENT '父级id',
-  `level` int(11) DEFAULT NULL COMMENT '层级',
-  `img` varchar(255) NOT NULL,
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE=MyISAM AUTO_INCREMENT=136 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='商品分类';
-
--- ----------------------------
--- Table structure for city
--- ----------------------------
-DROP TABLE IF EXISTS `city`;
-CREATE TABLE `city` (
-  `_id` int(11) NOT NULL DEFAULT 0,
-  `name` varchar(64) DEFAULT NULL,
-  `city_id` varchar(12) DEFAULT NULL,
-  `province_id` varchar(12) DEFAULT NULL,
-  PRIMARY KEY (`_id`) USING BTREE
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
-
--- ----------------------------
--- Table structure for collection
--- ----------------------------
-DROP TABLE IF EXISTS `collection`;
-CREATE TABLE `collection` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `uid` varchar(255) DEFAULT NULL COMMENT '用户id',
-  `goods_id` int(11) DEFAULT NULL COMMENT '商品id',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='用户收藏商品';
-
--- ----------------------------
--- Table structure for county
--- ----------------------------
-DROP TABLE IF EXISTS `county`;
-CREATE TABLE `county` (
-  `_id` int(11) NOT NULL DEFAULT 0,
-  `name` varchar(64) DEFAULT NULL,
-  `county_id` varchar(12) DEFAULT NULL,
-  `city_id` varchar(12) DEFAULT NULL,
-  PRIMARY KEY (`_id`) USING BTREE
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
-
--- ----------------------------
--- Table structure for goods
--- ----------------------------
-DROP TABLE IF EXISTS `goods`;
-CREATE TABLE `goods` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `cate_1st` int(11) NOT NULL COMMENT '一级分类id',
-  `cate_2nd` int(11) NOT NULL COMMENT '二级分类id',
-  `cate_3rd` int(11) DEFAULT NULL COMMENT '三级分类id',
-  `name` varchar(255) NOT NULL COMMENT '商品名称',
-  `hotPoint` varchar(255) DEFAULT NULL COMMENT '商品热点描述',
-  `price` decimal(10,2) NOT NULL COMMENT '商品价格',
-  `marketPrice` decimal(10,2) NOT NULL COMMENT '市场价',
-  `cost` decimal(10,2) NOT NULL COMMENT '成本价',
-  `discount` decimal(10,0) DEFAULT NULL COMMENT '折扣',
-  `inventory` int(11) NOT NULL COMMENT '库存',
-  `articleNo` int(11) NOT NULL COMMENT '货号',
-  `img_lg` varchar(255) NOT NULL COMMENT '商品主图-720',
-  `img_md` varchar(255) NOT NULL COMMENT '商品主图-360',
-  `slider` varchar(512) NOT NULL COMMENT '商品轮播图片',
-  `brand` varchar(255) DEFAULT NULL COMMENT '商品品牌',
-  `detail` varchar(5000) NOT NULL COMMENT '商品详情',
-  `freight` decimal(10,0) DEFAULT 0 COMMENT '商品运费',
-  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
-  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE=MyISAM AUTO_INCREMENT=39 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='商品表';
-
--- ----------------------------
--- Table structure for icon
--- ----------------------------
-DROP TABLE IF EXISTS `icon`;
-CREATE TABLE `icon` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) DEFAULT NULL COMMENT '图标名称',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE=MyISAM AUTO_INCREMENT=281 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
-
--- ----------------------------
--- Table structure for menu
--- ----------------------------
-DROP TABLE IF EXISTS `menu`;
-CREATE TABLE `menu` (
-  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '菜单id',
-  `name` varchar(255) DEFAULT NULL COMMENT '菜单名称',
-  `pId` int(11) DEFAULT NULL COMMENT '父级id',
-  `component` varchar(255) DEFAULT NULL COMMENT '组件名称',
-  `path` varchar(255) DEFAULT NULL COMMENT '链接url',
-  `menu_order` varchar(255) DEFAULT NULL COMMENT '显示顺序',
-  `icon_id` varchar(255) DEFAULT NULL COMMENT '图标id',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE=MyISAM AUTO_INCREMENT=15 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
-
--- ----------------------------
--- Table structure for orders
--- ----------------------------
-DROP TABLE IF EXISTS `orders`;
-CREATE TABLE `orders` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `uid` varchar(255) NOT NULL COMMENT '用户id',
-  `payment` double(20,2) DEFAULT NULL COMMENT '支付金额',
-  `payment_type` tinyint(4) DEFAULT NULL COMMENT '1-在线支付，1-货到付款',
-  `pay_time` datetime DEFAULT NULL COMMENT '支付时间',
-  `ship_fee` double(20,2) DEFAULT NULL COMMENT '邮费',
-  `ship_time` datetime DEFAULT NULL COMMENT '发货时间',
-  `ship_name` varchar(255) DEFAULT NULL COMMENT '快递公司',
-  `ship_number` varchar(100) DEFAULT NULL COMMENT '快递单号',
-  `received_time` datetime DEFAULT NULL COMMENT '收货时间',
-  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
-  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
-  `finish_time` datetime DEFAULT NULL COMMENT '交易完成时间',
+DROP TABLE IF EXISTS `bbjx_order`;
+CREATE TABLE `bbjx_order` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '订单id',
+  `order_no` bigint(20) DEFAULT NULL COMMENT '订单号',
+  `openid` varchar(40) DEFAULT '' COMMENT '用户id',
+  `shipping_id` int(11) DEFAULT NULL,
+  `payment` decimal(20,2) DEFAULT NULL COMMENT '实际付款金额,单位是元,保留两位小数',
+  `payment_type` int(11) DEFAULT NULL COMMENT '支付类型,1-在线支付',
+  `postage` int(11) DEFAULT NULL COMMENT '运费,单位是元',
+  `status` int(11) DEFAULT NULL COMMENT '订单状态:0-已取消-10-未付款，20-已付款，40-已发货，50-交易成功，60-交易关闭',
+  `payment_time` datetime DEFAULT NULL COMMENT '支付时间',
+  `send_time` datetime DEFAULT NULL COMMENT '发货时间',
+  `end_time` datetime DEFAULT NULL COMMENT '交易完成时间',
   `close_time` datetime DEFAULT NULL COMMENT '交易关闭时间',
-  `order_state` int(11) DEFAULT 0 COMMENT '状态字典',
-  `status` tinyint(4) DEFAULT 1 COMMENT '1-正常，0-禁用，-1-删除',
-  `refund_state` tinyint(4) DEFAULT NULL COMMENT '退款状态',
-  `comment_state` tinyint(4) DEFAULT NULL COMMENT '评论状态',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE=MyISAM AUTO_INCREMENT=17 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='订单表';
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `order_no_index` (`order_no`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Table structure for order_address
+-- Records of bbjx_order
 -- ----------------------------
-DROP TABLE IF EXISTS `order_address`;
-CREATE TABLE `order_address` (
+
+-- ----------------------------
+-- Table structure for bbjx_order_item
+-- ----------------------------
+DROP TABLE IF EXISTS `bbjx_order_item`;
+CREATE TABLE `bbjx_order_item` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '订单子表id',
+  `user_id` int(11) DEFAULT NULL,
+  `order_no` bigint(20) DEFAULT NULL,
+  `product_id` int(11) DEFAULT NULL COMMENT '商品id',
+  `product_name` varchar(100) DEFAULT NULL COMMENT '商品名称',
+  `product_image` varchar(500) DEFAULT NULL COMMENT '商品图片地址',
+  `current_unit_price` decimal(20,2) DEFAULT NULL COMMENT '生成订单时的商品单价，单位是元,保留两位小数',
+  `quantity` int(11) DEFAULT NULL COMMENT '商品数量',
+  `total_price` decimal(20,2) DEFAULT NULL COMMENT '商品总价,单位是元,保留两位小数',
+  `create_time` datetime DEFAULT NULL,
+  `update_time` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `order_no_index` (`order_no`) USING BTREE,
+  KEY `order_no_user_id_index` (`user_id`,`order_no`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of bbjx_order_item
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for bbjx_pay_info
+-- ----------------------------
+DROP TABLE IF EXISTS `bbjx_pay_info`;
+CREATE TABLE `bbjx_pay_info` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `order_id` int(11) NOT NULL COMMENT '订单id',
-  `name` varchar(255) NOT NULL COMMENT '姓名',
-  `tel` varchar(255) NOT NULL COMMENT '手机号',
-  `province` varchar(255) NOT NULL COMMENT '省',
-  `city` varchar(255) NOT NULL COMMENT '市',
-  `county` varchar(255) NOT NULL COMMENT '区',
-  `street` varchar(255) DEFAULT NULL COMMENT '街道',
-  `code` varchar(255) DEFAULT NULL COMMENT '邮编',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE=MyISAM AUTO_INCREMENT=23 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='收货地址';
+  `user_id` int(11) DEFAULT NULL COMMENT '用户id',
+  `order_no` bigint(20) NOT NULL COMMENT '订单号',
+  `pay_platform` int(11) DEFAULT NULL COMMENT '支付平台:1-支付宝,2-微信',
+  `platform_number` varchar(200) DEFAULT NULL COMMENT '支付流水号',
+  `platform_status` varchar(20) DEFAULT NULL COMMENT '支付状态',
+  `pay_amount` decimal(20,2) NOT NULL COMMENT '支付金额',
+  `create_time` datetime DEFAULT current_timestamp() COMMENT '创建时间',
+  `update_time` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp() COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uqe_order_no` (`order_no`),
+  UNIQUE KEY `uqe_platform_number` (`platform_number`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Table structure for order_goods
+-- Records of bbjx_pay_info
 -- ----------------------------
-DROP TABLE IF EXISTS `order_goods`;
-CREATE TABLE `order_goods` (
+
+-- ----------------------------
+-- Table structure for bbjx_product
+-- ----------------------------
+DROP TABLE IF EXISTS `bbjx_product`;
+CREATE TABLE `bbjx_product` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '商品id',
+  `hot` int(11) NOT NULL DEFAULT 1,
+  `category_id` int(11) NOT NULL COMMENT '分类id,对应bbjx_category表的主键',
+  `title` varchar(10) DEFAULT NULL,
+  `name` varchar(100) NOT NULL COMMENT '商品名称',
+  `subtitle` varchar(200) DEFAULT NULL COMMENT '商品副标题',
+  `main_image` varchar(500) DEFAULT NULL COMMENT '产品主图,url相对地址',
+  `sub_images` text DEFAULT NULL COMMENT '图片地址,json格式,扩展用',
+  `status` int(11) DEFAULT 1 COMMENT '商品状态.1-在售 2-下架 3-删除',
+  `detail` text DEFAULT NULL COMMENT '商品详情',
+  `discount_price` decimal(20,2) DEFAULT NULL,
+  `subsidize` decimal(10,0) DEFAULT NULL COMMENT '补贴价',
+  `tip` varchar(10) DEFAULT NULL,
+  `price` decimal(20,2) NOT NULL COMMENT '价格,单位-元保留两位小数',
+  `stock` int(11) NOT NULL COMMENT '库存数量',
+  `comment` varchar(255) DEFAULT NULL,
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of bbjx_product
+-- ----------------------------
+INSERT INTO `bbjx_product` VALUES ('26', '1', '100002', '品质手机', 'Apple iPhone 7 Plus (A1661) 128G 玫瑰金色 移动联通电信4G手机', 'iPhone 7，现更以红色呈现。', 'https://ftp.bmp.ovh/imgs/2021/04/80bae57111fddd22.png', '241997c4-9e62-4824-b7f0-7425c3c28917.jpeg,b6c56eb0-1748-49a9-98dc-bcc4b9788a54.jpeg,92f17532-1527-4563-aa1d-ed01baa0f7b2.jpeg,3adbe4f7-e374-4533-aa79-cc4a98c529bf.jpeg', '1', '<p><img alt=\"10000.jpg\" src=\"http://img.springboot.cn/00bce8d4-e9af-4c8d-b205-e6c75c7e252b.jpg\" width=\"790\" height=\"553\"><br></p><p><img alt=\"20000.jpg\" src=\"http://img.springboot.cn/4a70b4b4-01ee-46af-9468-31e67d0995b8.jpg\" width=\"790\" height=\"525\"><br></p><p><img alt=\"30000.jpg\" src=\"http://img.springboot.cn/0570e033-12d7-49b2-88f3-7a5d84157223.jpg\" width=\"790\" height=\"365\"><br></p><p><img alt=\"40000.jpg\" src=\"http://img.springboot.cn/50515c02-3255-44b9-a829-9e141a28c08a.jpg\" width=\"790\" height=\"525\"><br></p><p><img alt=\"50000.jpg\" src=\"http://img.springboot.cn/c138fc56-5843-4287-a029-91cf3732d034.jpg\" width=\"790\" height=\"525\"><br></p><p><img alt=\"60000.jpg\" src=\"http://img.springboot.cn/c92d1f8a-9827-453f-9d37-b10a3287e894.jpg\" width=\"790\" height=\"525\"><br></p><p><br></p><p><img alt=\"TB24p51hgFkpuFjSspnXXb4qFXa-1776456424.jpg\" src=\"http://img.springboot.cn/bb1511fc-3483-471f-80e5-c7c81fa5e1dd.jpg\" width=\"790\" height=\"375\"><br></p><p><br></p><p><img alt=\"shouhou.jpg\" src=\"http://img.springboot.cn/698e6fbe-97ea-478b-8170-008ad24030f7.jpg\" width=\"750\" height=\"150\"><br></p><p><img alt=\"999.jpg\" src=\"http://img.springboot.cn/ee276fe6-5d79-45aa-8393-ba1d210f9c89.jpg\" width=\"790\" height=\"351\"><br></p>', '23.00', '2', '立减', '6999.00', '96', '100%好评', null, '2000-04-13 21:45:41');
+INSERT INTO `bbjx_product` VALUES ('27', '2', '100006', '精品家电', 'Midea/美的 BCD-535WKZM(E)冰箱双开门对开门风冷无霜智能电家用', '送品牌烤箱，五一大促', 'https://ftp.bmp.ovh/imgs/2021/04/80bae57111fddd22.png', 'ac3e571d-13ce-4fad-89e8-c92c2eccf536.jpeg,4bb02f1c-62d5-48cc-b358-97b05af5740d.jpeg,36bdb49c-72ae-4185-9297-78829b54b566.jpeg', '1', '<p><img alt=\"miaoshu.jpg\" src=\"http://img.springboot.cn/9c5c74e6-6615-4aa0-b1fc-c17a1eff6027.jpg\" width=\"790\" height=\"444\"><br></p><p><img alt=\"miaoshu2.jpg\" src=\"http://img.springboot.cn/31dc1a94-f354-48b8-a170-1a1a6de8751b.jpg\" width=\"790\" height=\"1441\"><img alt=\"miaoshu3.jpg\" src=\"http://img.springboot.cn/7862594b-3063-4b52-b7d4-cea980c604e0.jpg\" width=\"790\" height=\"1442\"><img alt=\"miaoshu4.jpg\" src=\"http://img.springboot.cn/9a650563-dc85-44d6-b174-d6960cfb1d6a.jpg\" width=\"790\" height=\"1441\"><br></p>', '23.00', '2', '立减', '3299.00', '99', '100%好评', '2000-04-13 18:51:54', '2000-04-13 21:45:41');
+INSERT INTO `bbjx_product` VALUES ('28', '2', '100012', '精品手机', '4+64G送手环/Huawei/华为 nova 手机P9/P10plus青春', 'NOVA青春版1999元', 'https://ftp.bmp.ovh/imgs/2021/04/80bae57111fddd22.png', '0093f5d3-bdb4-4fb0-bec5-5465dfd26363.jpeg,13da2172-4445-4eb5-a13f-c5d4ede8458c.jpeg,58d5d4b7-58d4-4948-81b6-2bae4f79bf02.jpeg', '1', '<p><img alt=\"11TB2fKK3cl0kpuFjSsziXXa.oVXa_!!1777180618.jpg\" src=\"http://img.springboot.cn/5c2d1c6d-9e09-48ce-bbdb-e833b42ff664.jpg\" width=\"790\" height=\"966\"><img alt=\"22TB2YP3AkEhnpuFjSZFpXXcpuXXa_!!1777180618.jpg\" src=\"http://img.springboot.cn/9a10b877-818f-4a27-b6f7-62887f3fb39d.jpg\" width=\"790\" height=\"1344\"><img alt=\"33TB2Yyshk.hnpuFjSZFpXXcpuXXa_!!1777180618.jpg\" src=\"http://img.springboot.cn/7d7fbd69-a3cb-4efe-8765-423bf8276e3e.jpg\" width=\"790\" height=\"700\"><img alt=\"TB2diyziB8kpuFjSspeXXc7IpXa_!!1777180618.jpg\" src=\"http://img.springboot.cn/1d7160d2-9dba-422f-b2a0-e92847ba6ce9.jpg\" width=\"790\" height=\"393\"><br></p>', '23.00', '2', '立减', '1999.00', '100', '100%好评', '2000-04-13 18:57:18', '2000-04-13 21:45:41');
+INSERT INTO `bbjx_product` VALUES ('29', '2', '100008', '精品家电', 'Haier/海尔HJ100-1HU1 10公斤滚筒洗衣机全自动带烘干家用大容量 洗烘一体', '门店机型 德邦送货', 'https://ftp.bmp.ovh/imgs/2021/04/80bae57111fddd22.png', '173335a4-5dce-4afd-9f18-a10623724c4e.jpeg,42b1b8bc-27c7-4ee1-80ab-753d216a1d49.jpeg,2f1b3de1-1eb1-4c18-8ca2-518934931bec.jpeg', '1', '<p><img alt=\"1TB2WLZrcIaK.eBjSspjXXXL.XXa_!!2114960396.jpg\" src=\"http://img.springboot.cn/ffcce953-81bd-463c-acd1-d690b263d6df.jpg\" width=\"790\" height=\"920\"><img alt=\"2TB2zhOFbZCO.eBjSZFzXXaRiVXa_!!2114960396.jpg\" src=\"http://img.springboot.cn/58a7bd25-c3e7-4248-9dba-158ef2a90e70.jpg\" width=\"790\" height=\"1052\"><img alt=\"3TB27mCtb7WM.eBjSZFhXXbdWpXa_!!2114960396.jpg\" src=\"http://img.springboot.cn/2edbe9b3-28be-4a8b-a9c3-82e40703f22f.jpg\" width=\"790\" height=\"820\"><br></p>', '23.00', '2', '立减', '4299.00', '100', '100%好评', '2000-04-13 19:07:47', '2000-04-13 21:45:41');
+INSERT INTO `bbjx_product` VALUES ('30', '1', '100002', '品质手机', 'Apple iPhone 7 Plus (A1661) 128G 玫瑰金色 移动联通电信4G手机', 'iPhone 7，现更以红色呈现。', 'https://ftp.bmp.ovh/imgs/2021/04/80bae57111fddd22.png', '241997c4-9e62-4824-b7f0-7425c3c28917.jpeg,b6c56eb0-1748-49a9-98dc-bcc4b9788a54.jpeg,92f17532-1527-4563-aa1d-ed01baa0f7b2.jpeg,3adbe4f7-e374-4533-aa79-cc4a98c529bf.jpeg', '1', '<p><img alt=\"10000.jpg\" src=\"http://img.springboot.cn/00bce8d4-e9af-4c8d-b205-e6c75c7e252b.jpg\" width=\"790\" height=\"553\"><br></p><p><img alt=\"20000.jpg\" src=\"http://img.springboot.cn/4a70b4b4-01ee-46af-9468-31e67d0995b8.jpg\" width=\"790\" height=\"525\"><br></p><p><img alt=\"30000.jpg\" src=\"http://img.springboot.cn/0570e033-12d7-49b2-88f3-7a5d84157223.jpg\" width=\"790\" height=\"365\"><br></p><p><img alt=\"40000.jpg\" src=\"http://img.springboot.cn/50515c02-3255-44b9-a829-9e141a28c08a.jpg\" width=\"790\" height=\"525\"><br></p><p><img alt=\"50000.jpg\" src=\"http://img.springboot.cn/c138fc56-5843-4287-a029-91cf3732d034.jpg\" width=\"790\" height=\"525\"><br></p><p><img alt=\"60000.jpg\" src=\"http://img.springboot.cn/c92d1f8a-9827-453f-9d37-b10a3287e894.jpg\" width=\"790\" height=\"525\"><br></p><p><br></p><p><img alt=\"TB24p51hgFkpuFjSspnXXb4qFXa-1776456424.jpg\" src=\"http://img.springboot.cn/bb1511fc-3483-471f-80e5-c7c81fa5e1dd.jpg\" width=\"790\" height=\"375\"><br></p><p><br></p><p><img alt=\"shouhou.jpg\" src=\"http://img.springboot.cn/698e6fbe-97ea-478b-8170-008ad24030f7.jpg\" width=\"750\" height=\"150\"><br></p><p><img alt=\"999.jpg\" src=\"http://img.springboot.cn/ee276fe6-5d79-45aa-8393-ba1d210f9c89.jpg\" width=\"790\" height=\"351\"><br></p>', '23.00', '2', '立减', '6999.00', '96', '100%好评', '2021-04-07 22:30:39', '2000-04-13 21:45:41');
+INSERT INTO `bbjx_product` VALUES ('31', '2', '100006', '精品家电', 'Midea/美的 BCD-535WKZM(E)冰箱双开门对开门风冷无霜智能电家用', '送品牌烤箱，五一大促', 'https://ftp.bmp.ovh/imgs/2021/04/80bae57111fddd22.png', 'ac3e571d-13ce-4fad-89e8-c92c2eccf536.jpeg,4bb02f1c-62d5-48cc-b358-97b05af5740d.jpeg,36bdb49c-72ae-4185-9297-78829b54b566.jpeg', '1', '<p><img alt=\"miaoshu.jpg\" src=\"http://img.springboot.cn/9c5c74e6-6615-4aa0-b1fc-c17a1eff6027.jpg\" width=\"790\" height=\"444\"><br></p><p><img alt=\"miaoshu2.jpg\" src=\"http://img.springboot.cn/31dc1a94-f354-48b8-a170-1a1a6de8751b.jpg\" width=\"790\" height=\"1441\"><img alt=\"miaoshu3.jpg\" src=\"http://img.springboot.cn/7862594b-3063-4b52-b7d4-cea980c604e0.jpg\" width=\"790\" height=\"1442\"><img alt=\"miaoshu4.jpg\" src=\"http://img.springboot.cn/9a650563-dc85-44d6-b174-d6960cfb1d6a.jpg\" width=\"790\" height=\"1441\"><br></p>', '23.00', '2', '立减', '3299.00', '99', '100%好评', '2000-04-13 18:51:54', '2000-04-13 21:45:41');
+INSERT INTO `bbjx_product` VALUES ('32', '2', '100012', '精品手机', '4+64G送手环/Huawei/华为 nova 手机P9/P10plus青春', 'NOVA青春版1999元', 'https://ftp.bmp.ovh/imgs/2021/04/80bae57111fddd22.png', '0093f5d3-bdb4-4fb0-bec5-5465dfd26363.jpeg,13da2172-4445-4eb5-a13f-c5d4ede8458c.jpeg,58d5d4b7-58d4-4948-81b6-2bae4f79bf02.jpeg', '1', '<p><img alt=\"11TB2fKK3cl0kpuFjSsziXXa.oVXa_!!1777180618.jpg\" src=\"http://img.springboot.cn/5c2d1c6d-9e09-48ce-bbdb-e833b42ff664.jpg\" width=\"790\" height=\"966\"><img alt=\"22TB2YP3AkEhnpuFjSZFpXXcpuXXa_!!1777180618.jpg\" src=\"http://img.springboot.cn/9a10b877-818f-4a27-b6f7-62887f3fb39d.jpg\" width=\"790\" height=\"1344\"><img alt=\"33TB2Yyshk.hnpuFjSZFpXXcpuXXa_!!1777180618.jpg\" src=\"http://img.springboot.cn/7d7fbd69-a3cb-4efe-8765-423bf8276e3e.jpg\" width=\"790\" height=\"700\"><img alt=\"TB2diyziB8kpuFjSspeXXc7IpXa_!!1777180618.jpg\" src=\"http://img.springboot.cn/1d7160d2-9dba-422f-b2a0-e92847ba6ce9.jpg\" width=\"790\" height=\"393\"><br></p>', '23.00', '2', '立减', '1999.00', '100', '100%好评', '2000-04-13 18:57:18', '2021-04-07 21:45:41');
+INSERT INTO `bbjx_product` VALUES ('33', '2', '100008', '精品家电', 'Haier/海尔HJ100-1HU1 10公斤滚筒洗衣机全自动带烘干家用大容量 洗烘一体', '门店机型 德邦送货', 'https://ftp.bmp.ovh/imgs/2021/04/80bae57111fddd22.png', '173335a4-5dce-4afd-9f18-a10623724c4e.jpeg,42b1b8bc-27c7-4ee1-80ab-753d216a1d49.jpeg,2f1b3de1-1eb1-4c18-8ca2-518934931bec.jpeg', '1', '<p><img alt=\"1TB2WLZrcIaK.eBjSspjXXXL.XXa_!!2114960396.jpg\" src=\"http://img.springboot.cn/ffcce953-81bd-463c-acd1-d690b263d6df.jpg\" width=\"790\" height=\"920\"><img alt=\"2TB2zhOFbZCO.eBjSZFzXXaRiVXa_!!2114960396.jpg\" src=\"http://img.springboot.cn/58a7bd25-c3e7-4248-9dba-158ef2a90e70.jpg\" width=\"790\" height=\"1052\"><img alt=\"3TB27mCtb7WM.eBjSZFhXXbdWpXa_!!2114960396.jpg\" src=\"http://img.springboot.cn/2edbe9b3-28be-4a8b-a9c3-82e40703f22f.jpg\" width=\"790\" height=\"820\"><br></p>', '23.00', '2', '立减', '4299.00', '100', '100%好评', '2000-04-13 19:07:47', '2021-04-07 21:45:41');
+INSERT INTO `bbjx_product` VALUES ('34', '1', '100002', '品质手机', 'Apple iPhone 7 Plus (A1661) 128G 玫瑰金色 移动联通电信4G手机', 'iPhone 7，现更以红色呈现。', 'https://ftp.bmp.ovh/imgs/2021/04/80bae57111fddd22.png', '241997c4-9e62-4824-b7f0-7425c3c28917.jpeg,b6c56eb0-1748-49a9-98dc-bcc4b9788a54.jpeg,92f17532-1527-4563-aa1d-ed01baa0f7b2.jpeg,3adbe4f7-e374-4533-aa79-cc4a98c529bf.jpeg', '1', '<p><img alt=\"10000.jpg\" src=\"http://img.springboot.cn/00bce8d4-e9af-4c8d-b205-e6c75c7e252b.jpg\" width=\"790\" height=\"553\"><br></p><p><img alt=\"20000.jpg\" src=\"http://img.springboot.cn/4a70b4b4-01ee-46af-9468-31e67d0995b8.jpg\" width=\"790\" height=\"525\"><br></p><p><img alt=\"30000.jpg\" src=\"http://img.springboot.cn/0570e033-12d7-49b2-88f3-7a5d84157223.jpg\" width=\"790\" height=\"365\"><br></p><p><img alt=\"40000.jpg\" src=\"http://img.springboot.cn/50515c02-3255-44b9-a829-9e141a28c08a.jpg\" width=\"790\" height=\"525\"><br></p><p><img alt=\"50000.jpg\" src=\"http://img.springboot.cn/c138fc56-5843-4287-a029-91cf3732d034.jpg\" width=\"790\" height=\"525\"><br></p><p><img alt=\"60000.jpg\" src=\"http://img.springboot.cn/c92d1f8a-9827-453f-9d37-b10a3287e894.jpg\" width=\"790\" height=\"525\"><br></p><p><br></p><p><img alt=\"TB24p51hgFkpuFjSspnXXb4qFXa-1776456424.jpg\" src=\"http://img.springboot.cn/bb1511fc-3483-471f-80e5-c7c81fa5e1dd.jpg\" width=\"790\" height=\"375\"><br></p><p><br></p><p><img alt=\"shouhou.jpg\" src=\"http://img.springboot.cn/698e6fbe-97ea-478b-8170-008ad24030f7.jpg\" width=\"750\" height=\"150\"><br></p><p><img alt=\"999.jpg\" src=\"http://img.springboot.cn/ee276fe6-5d79-45aa-8393-ba1d210f9c89.jpg\" width=\"790\" height=\"351\"><br></p>', '23.00', '2', '立减', '6999.00', '96', '100%好评', '2021-04-07 22:31:59', '2000-04-13 21:45:41');
+INSERT INTO `bbjx_product` VALUES ('35', '2', '100006', '精品家电', 'Midea/美的 BCD-535WKZM(E)冰箱双开门对开门风冷无霜智能电家用', '送品牌烤箱，五一大促', 'https://ftp.bmp.ovh/imgs/2021/04/80bae57111fddd22.png', 'ac3e571d-13ce-4fad-89e8-c92c2eccf536.jpeg,4bb02f1c-62d5-48cc-b358-97b05af5740d.jpeg,36bdb49c-72ae-4185-9297-78829b54b566.jpeg', '1', '<p><img alt=\"miaoshu.jpg\" src=\"http://img.springboot.cn/9c5c74e6-6615-4aa0-b1fc-c17a1eff6027.jpg\" width=\"790\" height=\"444\"><br></p><p><img alt=\"miaoshu2.jpg\" src=\"http://img.springboot.cn/31dc1a94-f354-48b8-a170-1a1a6de8751b.jpg\" width=\"790\" height=\"1441\"><img alt=\"miaoshu3.jpg\" src=\"http://img.springboot.cn/7862594b-3063-4b52-b7d4-cea980c604e0.jpg\" width=\"790\" height=\"1442\"><img alt=\"miaoshu4.jpg\" src=\"http://img.springboot.cn/9a650563-dc85-44d6-b174-d6960cfb1d6a.jpg\" width=\"790\" height=\"1441\"><br></p>', '23.00', '2', '立减', '3299.00', '99', '100%好评', '2000-04-13 18:51:54', '2000-04-13 21:45:41');
+INSERT INTO `bbjx_product` VALUES ('36', '2', '100012', '精品手机', '4+64G送手环/Huawei/华为 nova 手机P9/P10plus青春', 'NOVA青春版1999元', 'https://ftp.bmp.ovh/imgs/2021/04/80bae57111fddd22.png', '0093f5d3-bdb4-4fb0-bec5-5465dfd26363.jpeg,13da2172-4445-4eb5-a13f-c5d4ede8458c.jpeg,58d5d4b7-58d4-4948-81b6-2bae4f79bf02.jpeg', '1', '<p><img alt=\"11TB2fKK3cl0kpuFjSsziXXa.oVXa_!!1777180618.jpg\" src=\"http://img.springboot.cn/5c2d1c6d-9e09-48ce-bbdb-e833b42ff664.jpg\" width=\"790\" height=\"966\"><img alt=\"22TB2YP3AkEhnpuFjSZFpXXcpuXXa_!!1777180618.jpg\" src=\"http://img.springboot.cn/9a10b877-818f-4a27-b6f7-62887f3fb39d.jpg\" width=\"790\" height=\"1344\"><img alt=\"33TB2Yyshk.hnpuFjSZFpXXcpuXXa_!!1777180618.jpg\" src=\"http://img.springboot.cn/7d7fbd69-a3cb-4efe-8765-423bf8276e3e.jpg\" width=\"790\" height=\"700\"><img alt=\"TB2diyziB8kpuFjSspeXXc7IpXa_!!1777180618.jpg\" src=\"http://img.springboot.cn/1d7160d2-9dba-422f-b2a0-e92847ba6ce9.jpg\" width=\"790\" height=\"393\"><br></p>', '23.00', '2', '立减', '1999.00', '100', '100%好评', '2000-04-13 18:57:18', '2000-04-13 21:45:41');
+INSERT INTO `bbjx_product` VALUES ('37', '2', '100008', '精品家电', 'Haier/海尔HJ100-1HU1 10公斤滚筒洗衣机全自动带烘干家用大容量 洗烘一体', '门店机型 德邦送货', 'https://ftp.bmp.ovh/imgs/2021/04/80bae57111fddd22.png', '173335a4-5dce-4afd-9f18-a10623724c4e.jpeg,42b1b8bc-27c7-4ee1-80ab-753d216a1d49.jpeg,2f1b3de1-1eb1-4c18-8ca2-518934931bec.jpeg', '1', '<p><img alt=\"1TB2WLZrcIaK.eBjSspjXXXL.XXa_!!2114960396.jpg\" src=\"http://img.springboot.cn/ffcce953-81bd-463c-acd1-d690b263d6df.jpg\" width=\"790\" height=\"920\"><img alt=\"2TB2zhOFbZCO.eBjSZFzXXaRiVXa_!!2114960396.jpg\" src=\"http://img.springboot.cn/58a7bd25-c3e7-4248-9dba-158ef2a90e70.jpg\" width=\"790\" height=\"1052\"><img alt=\"3TB27mCtb7WM.eBjSZFhXXbdWpXa_!!2114960396.jpg\" src=\"http://img.springboot.cn/2edbe9b3-28be-4a8b-a9c3-82e40703f22f.jpg\" width=\"790\" height=\"820\"><br></p>', '23.00', '2', '立减', '4299.00', '100', '100%好评', '2000-04-13 19:07:47', '2000-04-13 21:45:41');
+INSERT INTO `bbjx_product` VALUES ('38', '1', '100002', '品质手机', 'Apple iPhone 7 Plus (A1661) 128G 玫瑰金色 移动联通电信4G手机', 'iPhone 7，现更以红色呈现。', 'https://ftp.bmp.ovh/imgs/2021/04/80bae57111fddd22.png', '241997c4-9e62-4824-b7f0-7425c3c28917.jpeg,b6c56eb0-1748-49a9-98dc-bcc4b9788a54.jpeg,92f17532-1527-4563-aa1d-ed01baa0f7b2.jpeg,3adbe4f7-e374-4533-aa79-cc4a98c529bf.jpeg', '1', '<p><img alt=\"10000.jpg\" src=\"http://img.springboot.cn/00bce8d4-e9af-4c8d-b205-e6c75c7e252b.jpg\" width=\"790\" height=\"553\"><br></p><p><img alt=\"20000.jpg\" src=\"http://img.springboot.cn/4a70b4b4-01ee-46af-9468-31e67d0995b8.jpg\" width=\"790\" height=\"525\"><br></p><p><img alt=\"30000.jpg\" src=\"http://img.springboot.cn/0570e033-12d7-49b2-88f3-7a5d84157223.jpg\" width=\"790\" height=\"365\"><br></p><p><img alt=\"40000.jpg\" src=\"http://img.springboot.cn/50515c02-3255-44b9-a829-9e141a28c08a.jpg\" width=\"790\" height=\"525\"><br></p><p><img alt=\"50000.jpg\" src=\"http://img.springboot.cn/c138fc56-5843-4287-a029-91cf3732d034.jpg\" width=\"790\" height=\"525\"><br></p><p><img alt=\"60000.jpg\" src=\"http://img.springboot.cn/c92d1f8a-9827-453f-9d37-b10a3287e894.jpg\" width=\"790\" height=\"525\"><br></p><p><br></p><p><img alt=\"TB24p51hgFkpuFjSspnXXb4qFXa-1776456424.jpg\" src=\"http://img.springboot.cn/bb1511fc-3483-471f-80e5-c7c81fa5e1dd.jpg\" width=\"790\" height=\"375\"><br></p><p><br></p><p><img alt=\"shouhou.jpg\" src=\"http://img.springboot.cn/698e6fbe-97ea-478b-8170-008ad24030f7.jpg\" width=\"750\" height=\"150\"><br></p><p><img alt=\"999.jpg\" src=\"http://img.springboot.cn/ee276fe6-5d79-45aa-8393-ba1d210f9c89.jpg\" width=\"790\" height=\"351\"><br></p>', '23.00', '2', '立减', '6999.00', '96', '100%好评', '2021-04-07 22:30:39', '2000-04-13 21:45:41');
+INSERT INTO `bbjx_product` VALUES ('39', '2', '100006', '精品家电', 'Midea/美的 BCD-535WKZM(E)冰箱双开门对开门风冷无霜智能电家用', '送品牌烤箱，五一大促', 'https://ftp.bmp.ovh/imgs/2021/04/80bae57111fddd22.png', 'ac3e571d-13ce-4fad-89e8-c92c2eccf536.jpeg,4bb02f1c-62d5-48cc-b358-97b05af5740d.jpeg,36bdb49c-72ae-4185-9297-78829b54b566.jpeg', '1', '<p><img alt=\"miaoshu.jpg\" src=\"http://img.springboot.cn/9c5c74e6-6615-4aa0-b1fc-c17a1eff6027.jpg\" width=\"790\" height=\"444\"><br></p><p><img alt=\"miaoshu2.jpg\" src=\"http://img.springboot.cn/31dc1a94-f354-48b8-a170-1a1a6de8751b.jpg\" width=\"790\" height=\"1441\"><img alt=\"miaoshu3.jpg\" src=\"http://img.springboot.cn/7862594b-3063-4b52-b7d4-cea980c604e0.jpg\" width=\"790\" height=\"1442\"><img alt=\"miaoshu4.jpg\" src=\"http://img.springboot.cn/9a650563-dc85-44d6-b174-d6960cfb1d6a.jpg\" width=\"790\" height=\"1441\"><br></p>', '23.00', '2', '立减', '3299.00', '99', '100%好评', '2000-04-13 18:51:54', '2000-04-13 21:45:41');
+INSERT INTO `bbjx_product` VALUES ('40', '2', '100012', '精品手机', '4+64G送手环/Huawei/华为 nova 手机P9/P10plus青春', 'NOVA青春版1999元', 'https://ftp.bmp.ovh/imgs/2021/04/80bae57111fddd22.png', '0093f5d3-bdb4-4fb0-bec5-5465dfd26363.jpeg,13da2172-4445-4eb5-a13f-c5d4ede8458c.jpeg,58d5d4b7-58d4-4948-81b6-2bae4f79bf02.jpeg', '1', '<p><img alt=\"11TB2fKK3cl0kpuFjSsziXXa.oVXa_!!1777180618.jpg\" src=\"http://img.springboot.cn/5c2d1c6d-9e09-48ce-bbdb-e833b42ff664.jpg\" width=\"790\" height=\"966\"><img alt=\"22TB2YP3AkEhnpuFjSZFpXXcpuXXa_!!1777180618.jpg\" src=\"http://img.springboot.cn/9a10b877-818f-4a27-b6f7-62887f3fb39d.jpg\" width=\"790\" height=\"1344\"><img alt=\"33TB2Yyshk.hnpuFjSZFpXXcpuXXa_!!1777180618.jpg\" src=\"http://img.springboot.cn/7d7fbd69-a3cb-4efe-8765-423bf8276e3e.jpg\" width=\"790\" height=\"700\"><img alt=\"TB2diyziB8kpuFjSspeXXc7IpXa_!!1777180618.jpg\" src=\"http://img.springboot.cn/1d7160d2-9dba-422f-b2a0-e92847ba6ce9.jpg\" width=\"790\" height=\"393\"><br></p>', '23.00', '2', '立减', '1999.00', '100', '100%好评', '2000-04-13 18:57:18', '2021-04-07 21:45:41');
+INSERT INTO `bbjx_product` VALUES ('41', '2', '100008', '精品家电', 'Haier/海尔HJ100-1HU1 10公斤滚筒洗衣机全自动带烘干家用大容量 洗烘一体', '门店机型 德邦送货', 'https://ftp.bmp.ovh/imgs/2021/04/80bae57111fddd22.png', '173335a4-5dce-4afd-9f18-a10623724c4e.jpeg,42b1b8bc-27c7-4ee1-80ab-753d216a1d49.jpeg,2f1b3de1-1eb1-4c18-8ca2-518934931bec.jpeg', '1', '<p><img alt=\"1TB2WLZrcIaK.eBjSspjXXXL.XXa_!!2114960396.jpg\" src=\"http://img.springboot.cn/ffcce953-81bd-463c-acd1-d690b263d6df.jpg\" width=\"790\" height=\"920\"><img alt=\"2TB2zhOFbZCO.eBjSZFzXXaRiVXa_!!2114960396.jpg\" src=\"http://img.springboot.cn/58a7bd25-c3e7-4248-9dba-158ef2a90e70.jpg\" width=\"790\" height=\"1052\"><img alt=\"3TB27mCtb7WM.eBjSZFhXXbdWpXa_!!2114960396.jpg\" src=\"http://img.springboot.cn/2edbe9b3-28be-4a8b-a9c3-82e40703f22f.jpg\" width=\"790\" height=\"820\"><br></p>', '23.00', '2', '立减', '4299.00', '100', '100%好评', '2000-04-13 19:07:47', '2021-04-07 21:45:41');
+
+-- ----------------------------
+-- Table structure for bbjx_shipping
+-- ----------------------------
+DROP TABLE IF EXISTS `bbjx_shipping`;
+CREATE TABLE `bbjx_shipping` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `order_id` int(11) NOT NULL COMMENT '订单id',
-  `goods_id` int(11) DEFAULT NULL COMMENT '商品id',
-  `goods_num` int(11) DEFAULT NULL COMMENT '商品数量',
-  `goods_price` double(20,2) DEFAULT NULL COMMENT '商品价格',
-  `status` tinyint(4) DEFAULT 1 COMMENT '0-禁用，1-正常，-1-删除',
-  `update_time` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp() COMMENT '更新时间',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE=MyISAM AUTO_INCREMENT=15 DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='订单-商品表';
+  `user_id` int(11) DEFAULT NULL COMMENT '用户id',
+  `receiver_name` varchar(20) DEFAULT NULL COMMENT '收货姓名',
+  `receiver_phone` varchar(20) DEFAULT NULL COMMENT '收货固定电话',
+  `receiver_mobile` varchar(20) DEFAULT NULL COMMENT '收货移动电话',
+  `receiver_province` varchar(20) DEFAULT NULL COMMENT '省份',
+  `receiver_city` varchar(20) DEFAULT NULL COMMENT '城市',
+  `receiver_district` varchar(20) DEFAULT NULL COMMENT '区/县',
+  `receiver_address` varchar(200) DEFAULT NULL COMMENT '详细地址',
+  `receiver_zip` varchar(6) DEFAULT NULL COMMENT '邮编',
+  `create_time` datetime DEFAULT NULL,
+  `update_time` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Table structure for order_status
+-- Records of bbjx_shipping
 -- ----------------------------
-DROP TABLE IF EXISTS `order_status`;
-CREATE TABLE `order_status` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `code` tinyint(4) DEFAULT NULL,
-  `name` varchar(255) DEFAULT NULL,
-  `text` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='订单状态-字典表';
+INSERT INTO `bbjx_shipping` VALUES ('4', '1', '廖师兄', '010', '18688888888', '北京', '北京市', '海淀区', '中关村慕课网大楼', '100000', '2000-01-22 14:26:25', '2000-01-22 14:26:25');
 
 -- ----------------------------
--- Table structure for province
+-- Table structure for bbjx_user
 -- ----------------------------
-DROP TABLE IF EXISTS `province`;
-CREATE TABLE `province` (
-  `_id` int(11) NOT NULL DEFAULT 0,
-  `name` varchar(64) DEFAULT NULL,
-  `province_id` varchar(12) DEFAULT NULL,
-  PRIMARY KEY (`_id`) USING BTREE
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+DROP TABLE IF EXISTS `bbjx_user`;
+CREATE TABLE `bbjx_user` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '用户表id',
+  `openid` varchar(40) DEFAULT '',
+  `username` varchar(50) DEFAULT NULL COMMENT '用户名',
+  `password` varchar(256) DEFAULT NULL COMMENT '用户密码，MD5加密',
+  `email` varchar(50) DEFAULT NULL,
+  `phone` varchar(20) DEFAULT NULL,
+  `question` varchar(100) DEFAULT NULL COMMENT '找回密码问题',
+  `answer` varchar(100) DEFAULT NULL COMMENT '找回密码答案',
+  `role` int(11) DEFAULT NULL COMMENT '角色0-管理员,1-普通用户',
+  `create_time` datetime DEFAULT current_timestamp() COMMENT '创建时间',
+  `update_time` datetime DEFAULT current_timestamp() COMMENT '最后一次更新时间',
+  `session_key` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `user_name_unique` (`username`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Table structure for role
+-- Records of bbjx_user
 -- ----------------------------
-DROP TABLE IF EXISTS `role`;
-CREATE TABLE `role` (
-  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '角色id',
-  `role_name` varchar(255) DEFAULT NULL COMMENT '角色名称',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
-
--- ----------------------------
--- Table structure for role_menu
--- ----------------------------
-DROP TABLE IF EXISTS `role_menu`;
-CREATE TABLE `role_menu` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `role_id` int(11) DEFAULT NULL COMMENT '角色id',
-  `menu_id` int(11) DEFAULT NULL COMMENT '权限id',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE=MyISAM AUTO_INCREMENT=58 DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED;
-
--- ----------------------------
--- Table structure for town
--- ----------------------------
-DROP TABLE IF EXISTS `town`;
-CREATE TABLE `town` (
-  `_id` int(11) NOT NULL DEFAULT 0,
-  `name` varchar(64) DEFAULT NULL,
-  `town_id` varchar(12) DEFAULT NULL,
-  `county_id` varchar(12) DEFAULT NULL,
-  PRIMARY KEY (`_id`) USING BTREE
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
-
--- ----------------------------
--- Table structure for user
--- ----------------------------
-DROP TABLE IF EXISTS `user`;
-CREATE TABLE `user` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `nickname` varchar(255) DEFAULT NULL COMMENT '昵称',
-  `sex` varchar(255) DEFAULT '男' COMMENT '性别 0：未知、1：男、2：女',
-  `avatar` varchar(255) DEFAULT './images/avatar/default.jpg' COMMENT '头像',
-  `tel` varchar(255) DEFAULT NULL COMMENT '手机号码',
-  `country` varchar(255) DEFAULT NULL COMMENT '国家',
-  `province` varchar(255) DEFAULT NULL COMMENT '省',
-  `city` varchar(255) DEFAULT NULL COMMENT '市',
-  `openid` varchar(255) DEFAULT NULL COMMENT '小程序唯一标示id',
-  `session_key` varchar(255) DEFAULT NULL COMMENT '会话密钥',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='用户表';
+INSERT INTO `bbjx_user` VALUES ('1', null, 'admin', '21232F297A57A5A743894A0E4A801FC3', 'admin@qq.com', null, null, null, '0', '2000-08-06 15:12:00', '2000-08-06 15:12:00', null);
+INSERT INTO `bbjx_user` VALUES ('2', null, '123456', 'e10adc3949ba59abbe56e057f20f883e', '123455@qq.com', null, null, null, '1', '2021-02-14 16:20:08', '2021-02-14 16:20:08', null);
+INSERT INTO `bbjx_user` VALUES ('3', null, 'xixingya', '$2a$10$cLpY17Mw1gt8t6ksfIkw7OT8ePsjxR/mRbxfxSHuy8KklmMQFzG.K', '2679431923@qq.com', null, null, null, '1', '2021-03-30 20:03:35', '2021-03-30 20:03:35', null);
+INSERT INTO `bbjx_user` VALUES ('4', 'omGBq5C2WbNa2SStdhmsJ5fcSu_k', null, null, null, null, null, null, null, '2021-04-08 21:03:51', '2021-04-08 21:03:51', 'TAK3Ne4l2mY1FdhAb4JbAw==');
