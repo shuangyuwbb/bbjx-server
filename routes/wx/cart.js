@@ -19,7 +19,7 @@ let db = require('../../config/mysql');
  *
  * @apiSampleRequest /api/cart
  */
-router.post('/', function (req, res) {
+router.post('/', (req, res)=> {
     let { id, num } = req.body;
     let { openid } = req.user;
     // 检查购物车是否已经有此商品
@@ -52,7 +52,7 @@ router.post('/', function (req, res) {
  *
  * @apiSampleRequest /api/cart/list
  */
-router.get('/list', function (req, res) {
+router.get('/list', (req, res)=> {
     let { openid } = req.user;
     let sql =
         `SELECT cart.id, cart.goods_id, goods.img_md AS img, goods.name, goods.price, cart.goods_num 
@@ -78,7 +78,7 @@ router.get('/list', function (req, res) {
  *
  * @apiSampleRequest /api/cart
  */
-router.delete('/:id', function (req, res) {
+router.delete('/:id', (req, res)=> {
     let { id } = req.params;
     let sql = `DELETE FROM cart WHERE id = ?`;
     db.query(sql, [id], function (results) {
@@ -103,7 +103,7 @@ router.delete('/:id', function (req, res) {
  *
  * @apiSampleRequest /api/cart/increase
  */
-router.put('/increase', function (req, res) {
+router.put('/increase', (req, res)=> {
     let { id, gid, num } = req.body;
     // 检查库存
     let sql = `SELECT goods_num FROM cart WHERE id = ?;
@@ -141,7 +141,7 @@ router.put('/increase', function (req, res) {
  *
  * @apiSampleRequest /api/cart/decrease
  */
-router.put('/decrease', function (req, res) {
+router.put('/decrease', (req, res)=> {
     let { id, num } = req.body;
     let sql = `UPDATE cart SET goods_num = goods_num - ? WHERE id = ?`;
     db.query(sql, [num, id], function (results) {
@@ -152,7 +152,6 @@ router.put('/decrease', function (req, res) {
         });
     });
 });
-
 
 /**
  * 获取购物车页面

@@ -49,11 +49,11 @@ router.post('/token', function(req, res) {
     // 生成token
     let token = jwt.sign(data, 'secret', { expiresIn: '5h' });
     // 查询数据库中是否有此openid
-    let sql = 'SELECT * FROM user WHERE openid = ?';
+    let sql = 'SELECT * FROM bbjx_user WHERE openid = ?';
     db.query(sql, [data.openid], function(results) {
       // 如果没有此openid，插入新的数据
       if (results.length == 0) {
-        let sql = 'INSERT INTO user (openid,session_key) VALUES (?,?)';
+        let sql = 'INSERT INTO bbjx_user (openid,session_key) VALUES (?,?)';
         db.query(sql, [data.openid, data.session_key], function(results) {
           if (results.affectedRows > 0) {
             res.json({
@@ -65,7 +65,7 @@ router.post('/token', function(req, res) {
         return;
       }
       // 如果有此openid，更新session_key的数据
-      let sql = 'UPDATE user SET session_key = ? WHERE openid = ?';
+      let sql = 'UPDATE bbjx_user SET session_key = ? WHERE openid = ?';
       db.query(sql, [data.session_key, data.openid], function(results) {
         if (results.affectedRows > 0) {
           res.json({
@@ -97,7 +97,7 @@ router.post('/token', function(req, res) {
 router.put("/info", function(req, res) {
   let { nickName, gender, avatarUrl, country, province, city } = req.body;
   let { openid } = req.user;
-  let sql = `UPDATE user SET nickname = ?, sex = ?, avatar = ?, country = ?, province = ?, city = ? WHERE openid = ?`;
+  let sql = `UPDATE bbjx_user SET nickname = ?, sex = ?, avatar = ?, country = ?, province = ?, city = ? WHERE openid = ?`;
   db.query(sql, [nickName, gender, avatarUrl, country, province, city, openid], function(results) {
     if (results.affectedRows) {
       res.json({

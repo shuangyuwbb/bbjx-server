@@ -73,22 +73,13 @@ router.get("/list22", (req, res) => {
  */
 router.get("/detail", (req, res) =>{
     let { id } = req.query;
-    let { openid } = req.user;
-    let sql = `
-	SELECT id, name, price, hotPoint, marketPrice, discount, img_md, slider, detail FROM GOODS WHERE id = ?;
-	SELECT * FROM collection WHERE goods_id = ? AND uid = ?;
-	`
-    db.query(sql, [id, id, openid], function (results) {
-        if (results[1].length) {
-            results[0][0].isCollected = true;
-        } else {
-            results[0][0].isCollected = false;
-        }
-        //成功
+    // let { openid } = req.user;
+    let sql = `SELECT id, name, title,  price, main_image, discount_price, comment FROM bbjx_product WHERE id = ?`
+    db.query(sql, [id], (results)=> {
         res.json({
             status: 0,
             msg: "success!",
-            data: results[0][0]
+            data: results[0]
         });
     });
 });
@@ -193,8 +184,8 @@ router.get("/category/v2", (req, res) =>{
  */
 router.get("/list", (req, res) =>{
     let { id } = req.query
-    let sql = `SELECT id, subtitle, price, discount_price, main_image FROM bbjx_product WHERE hot > 1 ORDER BY hot DESC `
-    db.query(sql, [],  (results)=> {
+    let sql = `SELECT id, subtitle, price, discount_price, main_image FROM bbjx_product WHERE category_id=? and hot > 1 ORDER BY hot DESC`
+    db.query(sql, [id],  (results)=> {
         res.json({
             status: 0,
             msg: "success!",

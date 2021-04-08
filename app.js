@@ -35,6 +35,7 @@ app.use(expressJwt({ secret: 'secret' }).unless({
     '/api/goods/category/v2',
     '/api/goods/index/shopList',
     '/api/goods/list',
+    '/api/goods/detail',
     '/api/cart/shopList',
     '/api/user/token',
     '/api/admin/register',
