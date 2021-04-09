@@ -21,11 +21,10 @@ let { appid, appSecret } = require("../../config/wx");
 
 router.post('/token', function(req, res) {
   let { code } = req.body;
-  console.log(code)
   // 请求微信API
   let url =
       `https:/\/\api.weixin.qq.com/\sns/\jscode2session?appid=${appid}&secret=${appSecret}&js_code=${code}&grant_type=authorization_code`;
-  request(url, function(error, response, body) {
+  request(url, (error, response, body) => {
     if (error) {
       console.log(error);
       return;
@@ -59,6 +58,7 @@ router.post('/token', function(req, res) {
             res.json({
               status: 0,
               token: token,
+              openid: data.openid
             });
           }
         });
@@ -70,7 +70,8 @@ router.post('/token', function(req, res) {
         if (results.affectedRows > 0) {
           res.json({
             status: 0,
-            token: token
+            token: token,
+            openid: data.openid
           });
           return;
         }

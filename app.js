@@ -29,17 +29,19 @@ app.use(logger('dev'));
 //使用中间件验证token合法性
 app.use(expressJwt({ secret: 'secret' }).unless({
   path: ['/',
-    '/api/goods/index/category',
-    '/api/goods/index/hotGoods',
-    '/api/goods/category/v1',
-    '/api/goods/category/v2',
-    '/api/goods/index/shopList',
-    '/api/goods/list',
-    '/api/goods/detail',
-    '/api/cart/shopList',
-    '/api/user/token',
-    '/api/admin/register',
-    '/api/admin/login'] //除了这些地址，其他的URL都需要验证
+    '/goods/index/category',
+    '/goods/index/hotGoods',
+    '/goods/category/v1',
+    '/goods/category/v2',
+    '/goods/index/shopList',
+    '/goods/list',
+    '/goods/detail',
+    '/cart/shopList',
+    '/cart/list',
+    '/cart',
+    '/user/token',
+    '/admin/register',
+    '/admin/login'] //除了这些地址，其他的URL都需要验证
 }));
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: false }));
@@ -48,14 +50,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
 
-app.use('/api/address', address);
-app.use('/api/user', user);
-app.use('/api/goods', goods);
-app.use('/api/cart', cart);
-app.use('/api/order', order);
+app.use('/address', address);
+app.use('/user', user);
+app.use('/goods', goods);
+app.use('/cart', cart);
+app.use('/order', order);
 // app.use('/api/upload', userUpload);
-app.use('/api/pcct', PCCT);
-app.use('/api/collection', collection);
+app.use('/pcct', PCCT);
+app.use('/collection', collection);
 
 // 处理401错误
 // app.use((err, req, res, next) =>{
