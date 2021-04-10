@@ -5,7 +5,7 @@ const path = require('path');
 const logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-const expressJwt = require('express-jwt');
+// const expressJwt = require('express-jwt');
 const cors = require('cors')
 
 
@@ -18,31 +18,42 @@ let cart = require('./routes/wx/cart');
 // let userUpload = require('./routes/wx/upload');
 let PCCT = require('./routes/wx/PCCT');
 let collection = require('./routes/wx/collection');
+let adminUser = require('./routes/admin/user');
 const app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 app.use(cors())
+app.all('*', function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "X-Requested-With");
+  res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
+  res.header("X-Powered-By",' 3.2.1')
+  res.header("Content-Type", "application/json;charset=utf-8");
+  next();
+});
+
 
 app.use(logger('dev'));
 //使用中间件验证token合法性
-app.use(expressJwt({ secret: 'secret' }).unless({
-  path: ['/',
-    '/goods/index/category',
-    '/goods/index/hotGoods',
-    '/goods/category/v1',
-    '/goods/category/v2',
-    '/goods/index/shopList',
-    '/goods/list',
-    '/goods/detail',
-    '/cart/shopList',
-    '/cart/list',
-    '/cart',
-    '/user/token',
-    '/admin/register',
-    '/admin/login'] //除了这些地址，其他的URL都需要验证
-}));
+// app.use(expressJwt({ secret: 'secret' }).unless({
+//   path: ['/',
+//     '/goods/index/category',
+//     '/goods/index/hotGoods',
+//     '/goods/category/v1',
+//     '/goods/category/v2',
+//     '/goods/index/shopList',
+//     '/goods/list',
+//     '/goods/detail',
+//     '/cart/shopList',
+//     '/cart/list',
+//     '/cart',
+//     '/user/token',
+//     '/admin/register',
+//     '/admin/user',
+//     '/admin/login'] //除了这些地址，其他的URL都需要验证
+// }));
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -50,6 +61,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
 
+app.use('/admin', adminUser);
 app.use('/address', address);
 app.use('/user', user);
 app.use('/goods', goods);
@@ -85,6 +97,7 @@ app.use('/collection', collection);
 //   res.status(err.status || 500);
 //   res.render('error');
 // });
+// 允许跨域访问
 
 module.exports = app;
 
