@@ -113,7 +113,7 @@ router.put("/info", function(req, res) {
 /**
  * 获取用户
  */
-router.get("/user", (req, res) =>{
+router.get("/list", (req, res) =>{
   let sql = `SELECT id, username, email, phone, role, status FROM bbjx_user`
   db.query(sql, [],  (results)=> {
     res.json({
@@ -128,12 +128,51 @@ router.get("/user", (req, res) =>{
  * 更新用户
  */
 router.post("/update", (req, res) =>{
-  let {id, status} = req.body
-  let sql = `UPDATE bbjx_user SET status = ? WHERE id = ?`
-  db.query(sql, [status, id],  results=> {
+  let {id, status, password} = req.body
+  let sql = ''
+  let current = 0
+  if(password){
+    sql = `UPDATE bbjx_user SET password = ? WHERE id = ?`
+    current = password
+  }else{
+    sql = `UPDATE bbjx_user SET status = ? WHERE id = ?`
+    current = status
+  }
+  db.query(sql, [current, id],  results=> {
     res.json({
       status: 0,
-      msg: "success!",
+      msg: "更新用户信息成功!",
+      data: results
+    });
+  });
+});
+
+/**
+ * 添加用户
+ */
+router.post("/add", (req, res) =>{
+  let {username, password} = req.body
+  let role = 1
+  let sql = `INSERT INTO bbjx_user (username, password, role) VALUES (?, ?, ?)`
+  db.query(sql, [username, password, role],  results=> {
+    res.json({
+      status: 0,
+      msg: '新增用户成功！',
+      data: results
+    });
+  });
+});
+
+/**
+ * 搜索用户
+ */
+router.post("/search", (req, res) =>{
+  let {username, role} = req.body
+  let sql = `SELECT id, username, email, phone, role, status FROM bbjx_user WHERE username = ? AND role = ?`
+  db.query(sql, [username, role],  results=> {
+    res.json({
+      status: 0,
+      msg: '',
       data: results
     });
   });

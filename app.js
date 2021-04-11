@@ -19,6 +19,7 @@ let cart = require('./routes/wx/cart');
 let PCCT = require('./routes/wx/PCCT');
 let collection = require('./routes/wx/collection');
 let adminUser = require('./routes/admin/user');
+let adminGoods = require('./routes/admin/goods');
 const app = express();
 
 // view engine setup
@@ -61,7 +62,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
 
-app.use('/admin', adminUser);
+app.use('/admin/user', adminUser);
+app.use('/admin/goods', adminGoods);
 app.use('/address', address);
 app.use('/user', user);
 app.use('/goods', goods);

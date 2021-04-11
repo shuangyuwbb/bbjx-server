@@ -65,8 +65,8 @@ router.post('/create', function (req, res) {
         queryGid.push(item.id);
     });
     // 检查库存是否充足
-    let sql = `SELECT inventory FROM goods WHERE id IN (?)`;
-    db.query(sql, [queryGid], function (results) {
+    let sql = `SELECT stock FROM bbjx_product WHERE id IN (?)`;
+    db.query(sql, [queryGid], results=> {
         // every碰到第一个为false的，即终止执行
         let isAllPassed = results.every(function (item, index) {
             let isPassed = item.inventory >= goodsList[index].num;
