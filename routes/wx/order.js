@@ -20,8 +20,8 @@ let db = require('../../config/mysql');
  * @apiSampleRequest /api/order/settle
  */
 router.post('/settle', function (req, res) {
-    let { goods } = req.body;
-    let { openid } = req.user;
+    let {goods} = req.body;
+    let {openid} = req.user;
     // 多表查询
     let data = {};
     let sql = `SELECT * FROM address WHERE uid =? AND isDefault = 1 LIMIT 1`;
@@ -56,17 +56,17 @@ router.post('/settle', function (req, res) {
  *
  * @apiSampleRequest /api/order/create
  */
-router.post('/create', function (req, res) {
+router.post('/create1', function (req, res) {
     // 准备查询的商品id,方便使用IN
     let queryGid = [];
-    let { addressId, payment, goodsList } = req.body;
-    let { openid } = req.user;
+    let {addressId, payment, goodsList} = req.body;
+    let {openid} = req.user;
     goodsList.forEach(function (item) {
         queryGid.push(item.id);
     });
     // 检查库存是否充足
     let sql = `SELECT stock FROM bbjx_product WHERE id IN (?)`;
-    db.query(sql, [queryGid], results=> {
+    db.query(sql, [queryGid], results => {
         // every碰到第一个为false的，即终止执行
         let isAllPassed = results.every(function (item, index) {
             let isPassed = item.inventory >= goodsList[index].num;
@@ -86,11 +86,15 @@ router.post('/create', function (req, res) {
             return;
         }
         // 数据库事务
-        let { pool } = db;
+        let {pool} = db;
         pool.getConnection(function (error, connection) {
-            if (error) { throw error; }
+            if (error) {
+                throw error;
+            }
             connection.beginTransaction(function (error) {
-                if (error) { throw error; }
+                if (error) {
+                    throw error;
+                }
                 // 库存充足,对应商品减库存,拼接SQL
                 let sql = `UPDATE goods SET  inventory = CASE id `;
                 goodsList.forEach(function (item, index) {
@@ -112,7 +116,7 @@ router.post('/create', function (req, res) {
                             });
                         }
                         // 提取新订单id
-                        let { insertId } = results;
+                        let {insertId} = results;
                         // 存储收货地址快照
                         let sql =
                             `INSERT INTO order_address ( order_id, name, tel, province, city, county, street, code )
@@ -175,8 +179,8 @@ router.post('/create', function (req, res) {
  * @apiSampleRequest /api/order/list
  */
 router.get('/list', function (req, res) {
-    let { pageSize = 4, pageIndex = 1, status } = req.query;
-    let { openid } = req.user;
+    let {pageSize = 4, pageIndex = 1, status} = req.query;
+    let {openid} = req.user;
     let size = parseInt(pageSize);
     let count = size * (pageIndex - 1);
     // 查询订单信息
@@ -205,5 +209,112 @@ router.get('/list', function (req, res) {
     });
 });
 
+router.post('/create', function (req, res) {
+    // 准备查询的商品id,方便使用IN
+    let queryGid = [];
+    let {openid, addressId, payment, goodsList} = req.body;
+    goodsList.forEach(function (item) {
+        queryGid.push(item.id);
 
+    });
+    // 检查库存是否充足
+    let sql = `SELECT stock FROM bbjx_product WHERE id IN (?)`;
+    db.query(sql, [queryGid], results => {
+        // every碰到第一个为false的，即终止执行
+        let isAllPassed = results.every(function (item, index) {
+            let isPassed = item.stock >= goodsList[index].count;
+            if (isPassed == false) {
+                res.json({
+                    status: 1,
+                    msg: `id为${goodsList[index].id}的商品，库存不足!`,
+                    data: {
+                        id: goodsList[index].id
+                    }
+                });
+            }
+            return isPassed;
+        });
+        // 库存不足,终止执行
+        if (isAllPassed == false) {
+            return;
+        }
+        // 数据库事务
+        let {pool} = db;
+        pool.getConnection(function (error, connection) {
+            if (error) {
+                throw error;
+            }
+            connection.beginTransaction(function (error) {
+                if (error) {
+                    throw error;
+                }
+                // 库存充足,对应商品减库存,拼接SQL
+                let sql = `UPDATE bbjx_product SET  stock = CASE id `;
+                goodsList.forEach(function (item, index) {
+                    sql += `WHEN ${item.id} THEN stock - ${item.count} `;
+                });
+                sql += `END WHERE id IN (${queryGid});`;
+                connection.query(sql, function (error, results, fields) {
+                    if (error || results.changedRows <= 0) {
+                        return connection.rollback(function () {
+                            throw error || `${results.changedRows} rows changed!`;
+                        });
+                    }
+                    // 订单表中生成新订单
+                    let sql = `INSERT INTO bbjx_order (openid, create_time) VALUES (?,?,CURRENT_TIMESTAMP())`;
+                    connection.query(sql, [openid, payment], function (error, results, fields) {
+                        if (error || results.affectedRows <= 0) {
+                            return connection.rollback(function () {
+                                throw error || `${results.affectedRows} rows affected!`;
+                            });
+                        }
+                        // 提取新订单id
+                        let {insertId} = results;
+                        // 存储收货地址快照
+                        let sql =
+                            `INSERT INTO order_address ( order_id, name, tel, province, city, county, street, code )
+							 SELECT ( ? ), name, tel, province, city, county, street, code
+							 FROM address WHERE id = ?`;
+                        connection.query(sql, [insertId, addressId], function (error, results, fields) {
+                            if (error || results.affectedRows <= 0) {
+                                return connection.rollback(function () {
+                                    throw error || `${results.affectedRows} rows affected!`;
+                                });
+                            }
+                            // 购物车对应商品复制到order_goods表中，carts表删除对应商品
+                            let sql =
+                                `INSERT INTO order_goods ( order_id, goods_id, goods_num, goods_price ) 
+									SELECT ( ? ), c.goods_id, c.goods_num, g.price
+									FROM cart c JOIN goods g ON g.id = c.goods_id 
+									WHERE c.uid = ? AND c.goods_id IN (?);
+									DELETE FROM cart WHERE uid = ? AND goods_id IN (?)`;
+                            connection.query(sql, [insertId, openid, queryGid, openid, queryGid], function (error, results,
+                                                                                                            fields) {
+                                if (error || results.affectedRows <= 0) {
+                                    return connection.rollback(function () {
+                                        throw error || `${results.affectedRows} rows affected!`;
+                                    });
+                                }
+                                connection.commit(function (err) {
+                                    if (err) {
+                                        return connection.rollback(function () {
+                                            throw err;
+                                        });
+                                    }
+                                    res.json({
+                                        status: 0,
+                                        msg: "success!",
+                                        data: {
+                                            order_id: insertId
+                                        }
+                                    });
+                                });
+                            });
+                        });
+                    });
+                });
+            });
+        });
+    });
+});
 module.exports = router;
