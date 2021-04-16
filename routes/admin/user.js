@@ -5,10 +5,15 @@ const crypto = require('crypto')
 const jwt = require("jsonwebtoken");
 // 数据库
 let db = require('../../config/mysql');
+const multer = require('multer');
+const upload = multer();
+//图片处理
+const sharp = require('sharp');
+//uuid
+const uuidv1 = require('uuid/v1');
 
 router.post('/login', (req, res) => {
     let {username, password} = req.body;
-    // 生成token
     let md5 = crypto.createHash("md5");
     let newPas = md5.update(password).digest("hex");
     let token = jwt.sign({username}, 'secret', {expiresIn: '5h'});
@@ -19,7 +24,9 @@ router.post('/login', (req, res) => {
                 status: 0,
                 msg: '登陆成功！',
                 data:{
-                    token
+                    token,
+                    username: data[0].username,
+                    avatar: data[0].avatar
                 }
             })
         } else {
@@ -50,35 +57,41 @@ router.get("/list", (req, res) => {
  * 更新用户
  */
 router.post("/update", (req, res) => {
-    let {id, status, password} = req.body
-    let sql = ''
-    let current = 0
-    if (password) {
-        sql = `UPDATE bbjx_user SET password = ? WHERE id = ?`
-        current = password
-    } else {
-        sql = `UPDATE bbjx_user SET status = ? WHERE id = ?`
-        current = status
-    }
-    db.query(sql, [current, id], results => {
-        res.json({
-            status: 0,
-            msg: "更新用户信息成功!",
-            data: results
+    let {id, status, password, avatar} = req.body
+    console.log(id, status, password, avatar)
+    let md5 = crypto.createHash("md5");
+    let newPas = md5.update(password).digest("hex");
+    if (password !== undefined) {
+        let sql = `UPDATE bbjx_user SET password = ?, avatar=? WHERE id = ?`
+        db.query(sql, [newPas, avatar, id], results => {
+            res.json({
+                status: 0,
+                msg: "更新用户信息成功!",
+                data: results
+            });
         });
-    });
-});
+    } else {
+        let sql = `UPDATE bbjx_user SET status = ? WHERE id = ?`
+        db.query(sql, [status, id], results => {
+            res.json({
+                status: 0,
+                msg: "更新用户信息成功!",
+                data: results
+            });
+        });
+    }
+})
 
 /**
  * 添加用户
  */
 router.post("/add", (req, res) => {
-    let {username, password} = req.body
+    let {username, password, avatar} = req.body
     let md5 = crypto.createHash("md5");
     let newPas = md5.update(password).digest("hex");
     let role = 1
-    let sql = `INSERT INTO bbjx_user (username, password, role) VALUES (?, ?, ?)`
-    db.query(sql, [username, newPas, role], results => {
+    let sql = `INSERT INTO bbjx_user (username, password, role, avatar) VALUES (?, ?, ?, ?)`
+    db.query(sql, [username, newPas, role, avatar], results => {
         res.json({
             status: 0,
             msg: '新增用户成功！',
@@ -100,5 +113,66 @@ router.post("/search", (req, res) => {
             data: results
         });
     });
+});
+
+/**
+ * 上传用户头像
+ */
+router.post("/upload", upload.single('file'), async (req, res) =>{
+    //文件类型
+    let { mimetype, size } = req.file;
+    //判断是否为图片
+    var reg = /^image\/\w+$/;
+    var flag = reg.test(mimetype);
+    if (!flag) {
+        res.status(400).json({
+            status: false,
+            msg: "格式错误，请选择一张图片!"
+        });
+        return;
+    }
+    //判断图片体积是否小于2M
+    if (size >= 2 * 1024 * 1024) {
+        res.status(400).json({
+            status: false,
+            msg: "图片体积太大，请压缩图片!"
+        });
+        return;
+    }
+    // 获取图片信息
+    let { width, format } = await sharp(req.file.buffer).metadata();
+    // 判读图片尺寸
+    if (width < 300 || width > 1500) {
+        res.status(400).json({
+            status: false,
+            msg: "图片尺寸300-1500，请重新处理!"
+        });
+        return;
+    }
+    // 生成文件名
+    var filename = uuidv1();
+    // 储存文件夹
+    var fileFolder = "/images/avatar/";
+    //处理图片
+    try {
+        await sharp(req.file.buffer)
+            .resize(720)
+            .toFile("public" + fileFolder + filename + '_720.' + format);
+        await sharp(req.file.buffer)
+            .resize(360)
+            .toFile("public" + fileFolder + filename + '_360.' + format);
+        //返回储存结果
+        res.json({
+            status: 0,
+            msg: "图片上传处理成功!",
+            lgImg:process.env.server + fileFolder + filename + '_720.' + format,
+            mdImg:process.env.server + fileFolder + filename + '_360.' + format,
+        });
+    } catch (error) {
+        res.json({
+            status: false,
+            msg: error,
+        });
+    }
 });
 module.exports = router;

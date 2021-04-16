@@ -18,15 +18,26 @@ let db = require('../../config/mysql');
  *
  * @apiSampleRequest /api/collection
  */
-router.post("/", function (req, res) {
-    let { id } = req.body;
-    let { openid } = req.user;
-    let sql = 'INSERT INTO collection ( uid, goods_id ) VALUES (?,?)';
-    db.query(sql, [openid, id], function (results) {
-        //成功
-        res.json({
-            status: true,
-            msg: "success!",
+router.post('/', (req, res)=> {
+    let { id, openid } = req.body;
+    // 检查购物车是否已经有此商品
+    let sql = `SELECT * FROM bbjx_connection WHERE product_id = ?`;
+    db.query(sql, [id], results => {
+        // 没有此商品,插入新纪录
+        sql =
+            `INSERT INTO bbjx_connection ( openid , product_id , create_time, update_time)
+			VALUES ( '${openid}' , ${id} ,CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())`;
+        // 已有此商品，增加数量
+        if (results.length > 0) {
+            sql =
+                `UPDATE bbjx_connection SET update_time = CURRENT_TIMESTAMP() WHERE product_id = ${id} AND openid = '${openid}'`;
+        }
+        db.query(sql,  results=> {
+            //成功
+            res.json({
+                status: 0,
+                msg: "收藏成功！!"
+            });
         });
     });
 });

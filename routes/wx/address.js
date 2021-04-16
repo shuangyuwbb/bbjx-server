@@ -27,9 +27,8 @@ let db = require('../../config/mysql');
  */
 router.post('/', function (req, res) {
     let sql;
-    let { name, tel, province, city, county, street, code, isDefault } = req.body;
-    let { openid } = req.user;
-    if (isDefault == '1') {
+    let {openid, name, tel, province, city, county, street, code, isDefault } = req.body;
+    if (isDefault === '1') {
         sql = `UPDATE address SET isDefault = 0 WHERE uid = '${openid}';
 		INSERT INTO address(uid, name, tel, province, city, county, street, code, isDefault) VALUES(?,?,?,?,?,?,?,?,?);`
     } else {
@@ -110,8 +109,8 @@ router.put("/", function (req, res) {
  * @apiSampleRequest /api/address/list
  */
 router.get('/list', function (req, res) {
-    let { openid } = req.user;
-    var sql = 'SELECT * FROM address WHERE uid = ?'
+    let { openid } = req.query;
+    let sql = 'SELECT * FROM address WHERE uid = ?'
     db.query(sql, [openid], function (results) {
         if (!results.length) {
             res.json({

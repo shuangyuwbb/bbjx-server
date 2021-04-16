@@ -212,17 +212,17 @@ router.get('/list', function (req, res) {
 router.post('/create', function (req, res) {
     // 准备查询的商品id,方便使用IN
     let queryGid = [];
-    let {openid, addressId, payment, goodsList} = req.body;
+    let {addressId, payment, goodsList} = req.body;
+    let {openid} = req.user;
     goodsList.forEach(function (item) {
         queryGid.push(item.id);
-
     });
     // 检查库存是否充足
     let sql = `SELECT stock FROM bbjx_product WHERE id IN (?)`;
     db.query(sql, [queryGid], results => {
         // every碰到第一个为false的，即终止执行
         let isAllPassed = results.every(function (item, index) {
-            let isPassed = item.stock >= goodsList[index].count;
+            let isPassed = item.inventory >= goodsList[index].num;
             if (isPassed == false) {
                 res.json({
                     status: 1,
@@ -251,7 +251,7 @@ router.post('/create', function (req, res) {
                 // 库存充足,对应商品减库存,拼接SQL
                 let sql = `UPDATE bbjx_product SET  stock = CASE id `;
                 goodsList.forEach(function (item, index) {
-                    sql += `WHEN ${item.id} THEN stock - ${item.count} `;
+                    sql += `WHEN ${item.id} THEN stock - ${item.num} `;
                 });
                 sql += `END WHERE id IN (${queryGid});`;
                 connection.query(sql, function (error, results, fields) {
@@ -261,7 +261,7 @@ router.post('/create', function (req, res) {
                         });
                     }
                     // 订单表中生成新订单
-                    let sql = `INSERT INTO bbjx_order (openid, create_time) VALUES (?,?,CURRENT_TIMESTAMP())`;
+                    let sql = `INSERT INTO orders (uid,payment,create_time) VALUES (?,?,CURRENT_TIMESTAMP())`;
                     connection.query(sql, [openid, payment], function (error, results, fields) {
                         if (error || results.affectedRows <= 0) {
                             return connection.rollback(function () {

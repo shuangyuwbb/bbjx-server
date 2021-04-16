@@ -26,14 +26,14 @@ router.post('/', (req, res)=> {
     db.query(sql, [id], results => {
         // 没有此商品,插入新纪录
         sql =
-            `INSERT INTO bbjx_cart ( openid , product_id , count , create_time )
-			VALUES ( '${openid}' , ${id} , ${num} ,CURRENT_TIMESTAMP())`;
+            `INSERT INTO bbjx_cart ( openid , product_id , count , create_time, update_time )
+			VALUES ( '${openid}' , ${id} , ${num} ,CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())`;
         // 已有此商品，增加数量
         if (results.length > 0) {
             sql =
-                `UPDATE bbjx_cart SET count = count + ${num} WHERE product_id = ${id} AND openid = '${openid}'`;
+                `UPDATE bbjx_cart SET count = count + ${num}, update_time = CURRENT_TIMESTAMP() WHERE product_id = ${id} AND openid = '${openid}'`;
         }
-        db.query(sql, function (results) {
+        db.query(sql,  results=> {
             //成功
             res.json({
                 status: 0,

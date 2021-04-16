@@ -72,7 +72,7 @@ router.get("/category/v1", (req, res) =>{
  */
 router.get("/category/v2", (req, res) =>{
     let { id } = req.query
-    let sql = `SELECT id, name FROM bbjx_category WHERE parent_id = ?`
+    let sql = `SELECT * FROM bbjx_category WHERE parent_id = ?`
     db.query(sql, [id],  data=>{
         res.json({
             status: 0,
@@ -212,8 +212,181 @@ router.post("/upload", upload.single('file'), async (req, res) =>{
     }
 });
 
+router.post("/category/ads", upload.single('file'), async (req, res) =>{
+    //文件类型
+    let { mimetype, size } = req.file;
+    //判断是否为图片
+    var reg = /^image\/\w+$/;
+    var flag = reg.test(mimetype);
+    if (!flag) {
+        res.status(400).json({
+            status: false,
+            msg: "格式错误，请选择一张图片!"
+        });
+        return;
+    }
+    //判断图片体积是否小于2M
+    if (size >= 2 * 1024 * 1024) {
+        res.status(400).json({
+            status: false,
+            msg: "图片体积太大，请压缩图片!"
+        });
+        return;
+    }
+    // 获取图片信息
+    let { width, format } = await sharp(req.file.buffer).metadata();
+    // 判读图片尺寸
+    if (width < 300 || width > 1500) {
+        res.status(400).json({
+            status: false,
+            msg: "图片尺寸300-1500，请重新处理!"
+        });
+        return;
+    }
+    // 生成文件名
+    var filename = uuidv1();
+    // 储存文件夹
+    var fileFolder = "/images/ads/";
+    //处理图片
+    try {
+        await sharp(req.file.buffer)
+            .resize(720)
+            .toFile("public" + fileFolder + filename + '_720.' + format);
+        await sharp(req.file.buffer)
+            .resize(360)
+            .toFile("public" + fileFolder + filename + '_360.' + format);
+        //返回储存结果
+        res.json({
+            status: 0,
+            msg: "图片上传处理成功!",
+            lgImg:process.env.server + fileFolder + filename + '_720.' + format,
+            mdImg:process.env.server + fileFolder + filename + '_360.' + format,
+        });
+    } catch (error) {
+        res.json({
+            status: false,
+            msg: error,
+        });
+    }
+});
 
+router.post("/category/upload", upload.single('file'), async (req, res) =>{
+    //文件类型
+    let { mimetype, size } = req.file;
+    //判断是否为图片
+    var reg = /^image\/\w+$/;
+    var flag = reg.test(mimetype);
+    if (!flag) {
+        res.status(400).json({
+            status: false,
+            msg: "格式错误，请选择一张图片!"
+        });
+        return;
+    }
+    //判断图片体积是否小于2M
+    if (size >= 2 * 1024 * 1024) {
+        res.status(400).json({
+            status: false,
+            msg: "图片体积太大，请压缩图片!"
+        });
+        return;
+    }
+    // 获取图片信息
+    let { width, format } = await sharp(req.file.buffer).metadata();
+    // 判读图片尺寸
+    if (width < 300 || width > 1500) {
+        res.status(400).json({
+            status: false,
+            msg: "图片尺寸300-1500，请重新处理!"
+        });
+        return;
+    }
+    // 生成文件名
+    var filename = uuidv1();
+    // 储存文件夹
+    var fileFolder = "/images/category/";
+    //处理图片
+    try {
+        await sharp(req.file.buffer)
+            .resize(720)
+            .toFile("public" + fileFolder + filename + '_720.' + format);
+        await sharp(req.file.buffer)
+            .resize(360)
+            .toFile("public" + fileFolder + filename + '_360.' + format);
+        //返回储存结果
+        res.json({
+            status: 0,
+            msg: "图片上传处理成功!",
+            lgImg:process.env.server + fileFolder + filename + '_720.' + format,
+            mdImg:process.env.server + fileFolder + filename + '_360.' + format,
+        });
+    } catch (error) {
+        res.json({
+            status: false,
+            msg: error,
+        });
+    }
+});
 
+/**
+ * 添加分类
+ */
+router.post("/category", (req, res) =>{
+    let {parent_id, name, img} = req.body
+    let sql = `INSERT INTO bbjx_category (parent_id, name, img) VALUES (?, ?, ?)`
+    db.query(sql, [parent_id, name, img],  data=> {
+        res.json({
+            status: 0,
+            msg: "success!",
+            data
+        });
+    });
+});
+
+/**
+ * 更新分类
+ */
+router.post("/category/update", (req, res) =>{
+    let {id, name, img, ads} = req.body
+    let sql = `UPDATE bbjx_category SET name= ?,img=?, ads=? WHERE id = ? `
+    db.query(sql, [name, img, ads, id],  data=> {
+        res.json({
+            status: 0,
+            msg: "success!",
+            data
+        });
+    });
+});
+
+/**
+ * 删除分类
+ */
+router.delete("/category", (req, res) =>{
+    let {parent_id, name, img} = req.body
+    let sql = `INSERT INTO bbjx_category (parent_id, name, img) VALUES (?, ?, ?)`
+    db.query(sql, [parent_id, name, img],  data=> {
+        res.json({
+            status: 0,
+            msg: "success!",
+            data
+        });
+    });
+});
+
+/**
+ * 获取一级分类id查询二级分类
+ */
+router.get("/category", (req, res) =>{
+    let { id } = req.query
+    let sql = `SELECT * FROM bbjx_category WHERE parent_id = ?`
+    db.query(sql, [id],  data=>{
+        res.json({
+            status: 0,
+            msg: "success!",
+            data
+        });
+    });
+});
 module.exports = router;
 
 

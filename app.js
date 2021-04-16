@@ -15,6 +15,7 @@ let user = require('./routes/wx/user');
 let address = require('./routes/wx/address');
 let goods = require('./routes/wx/goods');
 let cart = require('./routes/wx/cart');
+let connection = require('./routes/wx/collection');
 // let userUpload = require('./routes/wx/upload');
 let PCCT = require('./routes/wx/PCCT');
 let collection = require('./routes/wx/collection');
@@ -68,37 +69,37 @@ app.use('/address', address);
 app.use('/user', user);
 app.use('/goods', goods);
 app.use('/cart', cart);
+app.use('/connection', connection);
 app.use('/order', order);
-// app.use('/api/upload', userUpload);
 app.use('/pcct', PCCT);
 app.use('/collection', collection);
 
 // 处理401错误
-// app.use((err, req, res, next) =>{
-//   if (err.name === 'UnauthorizedError') {
-//     res.status(401).json({
-//       status: false,
-//       ...err,
-//     });
-//   }
-// });
+app.use((err, req, res, next) =>{
+  if (err.name === 'UnauthorizedError') {
+    res.status(401).json({
+      status: false,
+      ...err,
+    });
+  }
+});
 // catch 404 and forward to error handler
-// app.use( (req, res, next)=> {
-//   var err = new Error('Not Found');
-//   err.status = 404;
-//   next(err);
-// });
+app.use( (req, res, next)=> {
+  var err = new Error('Not Found');
+  err.status = 404;
+  next(err);
+});
 
 // error handler
-// app.use((err, req, res, next)=> {
-//   // set locals, only providing error in development
-//   res.locals.message = err.message;
-//   res.locals.error = req.app.get('env') === 'development' ? err : {};
-//
-//   // render the error page
-//   res.status(err.status || 500);
-//   res.render('error');
-// });
+app.use((err, req, res, next)=> {
+  // set locals, only providing error in development
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') === 'development' ? err : {};
+
+  // render the error page
+  res.status(err.status || 500);
+  res.render('error');
+});
 // 允许跨域访问
 
 module.exports = app;
