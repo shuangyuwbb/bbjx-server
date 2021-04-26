@@ -16,29 +16,6 @@ const uuidv1 = require('uuid/v1');
 let db = require('../../config/mysql');
 
 /**
- * @api {get} /api/goods/detail 获取商品详情
- * @apiName GoodsDetail
- * @apiGroup Goods
- * @apiPermission user
- *
- * @apiParam {Number} id 商品id;
- *
- * @apiSampleRequest /api/goods/detail
- */
-router.get("/detail", (req, res) =>{
-    let { id } = req.query;
-    // let { openid } = req.user;
-    let sql = `SELECT id, name, title,  price, main_image, discount_price, comment FROM bbjx_product WHERE id = ?`
-    db.query(sql, [id], (results)=> {
-        res.json({
-            status: 0,
-            msg: "success!",
-            data: results[0]
-        });
-    });
-});
-
-/**
  * 获取首页顶部t分类
  */
 router.get("/index/category", (req, res) =>{
@@ -46,7 +23,7 @@ router.get("/index/category", (req, res) =>{
     db.query(sql, [],  (results)=> {
         res.json({
             status: 0,
-            msg: "success!",
+            msg: '',
             data: results
         });
     });
@@ -61,7 +38,7 @@ router.get("/category/v1", (req, res) =>{
         //成功
         res.json({
             status: 0,
-            msg: "success!",
+            msg: '',
             data
         });
     });
@@ -76,7 +53,7 @@ router.get("/category/v2", (req, res) =>{
     db.query(sql, [id],  data=>{
         res.json({
             status: 0,
-            msg: "success!",
+            msg: '',
             data
         });
     });
@@ -87,11 +64,11 @@ router.get("/category/v2", (req, res) =>{
  */
 router.get("/lists", (req, res) =>{
     let { id } = req.query
-    let sql = `SELECT id, subtitle, category_id, price, discount_price, title, main_image FROM bbjx_product WHERE category_id in (?)`
+    let sql = `SELECT id, subtitle, category_id, price, discount_price, title, status, main_image FROM bbjx_product WHERE category_id in (?)`
     db.query(sql, [id],  data=>{
             res.json({
                 status: 0,
-                msg: "success!",
+                msg: '',
                 data
             });
     });
@@ -117,11 +94,11 @@ router.post("/add", (req, res) =>{
  */
 router.post("/update", (req, res) =>{
     let {id, subtitle, name, discount_price, main_image, hot} = req.body
-    let sql = `UPDATE bbjx_product subtitle =?, name=?, discount_price=?, main_image=?, hot=? WHERE id=?`
+    let sql = `UPDATE bbjx_product SET subtitle =?, name=?, discount_price=?, main_image=?, hot=? WHERE id=?`
     db.query(sql, [subtitle, name, discount_price, main_image, hot, id],  data=> {
         res.json({
             status: 0,
-            msg: "添加商品成功!",
+            msg: "更新商品成功!",
             data
         });
     });
@@ -130,11 +107,11 @@ router.post("/update", (req, res) =>{
 
 router.post("/updateStatus", (req, res) =>{
     let {id, status} = req.body
-    let sql = `UPDATE bbjx_product status=? WHERE id=?`
+    let sql = `UPDATE bbjx_product SET status=? WHERE id=?`
     db.query(sql, [status, id],  data=> {
         res.json({
             status: 0,
-            msg: "更新成功!",
+            msg: "更新商品状态成功!",
             data
         });
     });
@@ -348,7 +325,7 @@ router.post("/category", (req, res) =>{
  */
 router.post("/category/update", (req, res) =>{
     let {id, name, img, ads} = req.body
-    let sql = `UPDATE bbjx_category SET name= ?,img=?, ads=? WHERE id = ? `
+    let sql = `UPDATE bbjx_category SET name= ?,img=?, ads=? WHERE id = ?`
     db.query(sql, [name, img, ads, id],  data=> {
         res.json({
             status: 0,
@@ -387,6 +364,8 @@ router.get("/category", (req, res) =>{
         });
     });
 });
+
+
 module.exports = router;
 
 

@@ -22,7 +22,7 @@ router.post('/login', (req, res) => {
         if (data.length>0) {
             res.json({
                 status: 0,
-                msg: '登陆成功！',
+                msg: '登录成功！',
                 data:{
                     token,
                     username: data[0].username,
@@ -47,7 +47,7 @@ router.get("/list", (req, res) => {
     db.query(sql, [role], (results) => {
         res.json({
             status: 0,
-            msg: "success!",
+            msg: '',
             data: results
         });
     });
@@ -59,9 +59,9 @@ router.get("/list", (req, res) => {
 router.post("/update", (req, res) => {
     let {id, status, password, avatar} = req.body
     console.log(id, status, password, avatar)
-    let md5 = crypto.createHash("md5");
-    let newPas = md5.update(password).digest("hex");
     if (password !== undefined) {
+        let md5 = crypto.createHash("md5");
+        let newPas = md5.update(password).digest("hex");
         let sql = `UPDATE bbjx_user SET password = ?, avatar=? WHERE id = ?`
         db.query(sql, [newPas, avatar, id], results => {
             res.json({
@@ -75,7 +75,7 @@ router.post("/update", (req, res) => {
         db.query(sql, [status, id], results => {
             res.json({
                 status: 0,
-                msg: "更新用户信息成功!",
+                msg: "更新用户状态成功!",
                 data: results
             });
         });
@@ -106,11 +106,11 @@ router.post("/add", (req, res) => {
 router.post("/search", (req, res) => {
     let {username, role} = req.body
     let sql = `SELECT id, username, email, phone, role, status FROM bbjx_user WHERE username = ? AND role = ?`
-    db.query(sql, [username, role], results => {
+    db.query(sql, [username, role], data => {
         res.json({
             status: 0,
             msg: '',
-            data: results
+            data
         });
     });
 });
